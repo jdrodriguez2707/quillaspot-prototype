@@ -76,7 +76,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onSelectPlace }) =>
             {place.isFeatured ? (
               <span className="h-6 inline-flex items-center gap-1 px-2.5 rounded-full text-[11px] font-bold bg-amber-500/95 backdrop-blur-md text-white shadow-xs tracking-wide">
                 <Sparkles className="w-3 h-3 fill-white" />
-                <span>★ Recomendado</span>
+                <span>Recomendado</span>
               </span>
             ) : (
               <span className="h-6 inline-flex items-center px-2.5 rounded-full text-[11px] font-semibold bg-black/60 backdrop-blur-md text-white shadow-xs">
@@ -85,12 +85,15 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onSelectPlace }) =>
             )}
           </div>
 
-          {/* Badge derecho: Nivel de precio con idéntica altura (h-6) */}
+          {/* Badge derecho: Nivel de precio con idéntica altura (h-6) e icono $ integrado */}
           <div>
             <span
-              className={`h-6 inline-flex items-center px-2.5 rounded-full text-[11px] font-semibold tracking-wide border shadow-xs backdrop-blur-md ${priceBadgeClass}`}
+              className={`h-6 inline-flex items-center gap-1 pl-2 pr-2.5 rounded-full text-[11px] font-semibold tracking-wide border shadow-xs backdrop-blur-md ${priceBadgeClass}`}
             >
-              {place.priceLevel}
+              <span className="w-3.5 h-3.5 rounded-full bg-white/25 flex items-center justify-center text-[9px] font-black text-white shrink-0 leading-none">
+                $
+              </span>
+              <span>{place.priceLevel}</span>
             </span>
           </div>
         </div>

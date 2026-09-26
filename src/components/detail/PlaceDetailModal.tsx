@@ -227,7 +227,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
                 {place.isFeatured && (
                   <span className="h-6 inline-flex items-center gap-1 px-2.5 rounded-full text-[11px] font-bold bg-amber-500 text-white shadow-xs">
                     <Sparkles className="w-3 h-3 fill-white" />
-                    <span>★ Recomendado</span>
+                    <span>Recomendado</span>
                   </span>
                 )}
                 <span className="h-6 inline-flex items-center px-2.5 rounded-full text-[11px] font-semibold bg-black/50 backdrop-blur-md text-white">
@@ -266,8 +266,11 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
                 {!isFreeEntry && (
                   <span className="font-bold text-slate-900">Rango de precios:</span>
                 )}
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${getPriceBadgeStyle(place.priceLevel)}`}>
-                  {place.priceLevel}
+                <span className={`inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[10px] font-bold ${getPriceBadgeStyle(place.priceLevel)}`}>
+                  <span className="w-3 h-3 rounded-full bg-white/25 flex items-center justify-center text-[8px] font-black text-white shrink-0 leading-none">
+                    $
+                  </span>
+                  <span>{place.priceLevel}</span>
                 </span>
               </div>
               <p className="text-slate-600 mt-1 font-medium leading-relaxed">
