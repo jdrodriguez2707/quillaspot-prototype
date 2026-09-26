@@ -1,51 +1,48 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import rawPlaces from './data/places.json';
 import { Place } from './types/place';
 import { Header } from './components/layout/Header';
 import { HeroBanner } from './components/layout/HeroBanner';
+import { PlaceList } from './components/places/PlaceList';
 import { Footer } from './components/layout/Footer';
 
 export default function App() {
-  // Carga inicial y tipada de los lugares desde places.json
-  const [places] = useState<Place[]>(rawPlaces as Place[]);
+  // Lógica de ordenamiento Fase 2:
+  // Los lugares con isFeatured: true DEBEN renderizarse primero en la lista
+  const sortedPlaces = useMemo(() => {
+    const list = [...(rawPlaces as Place[])];
+    return list.sort((a, b) => {
+      // 1. Prioridad a destacados (isFeatured: true primero)
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+      // 2. Si ambos son destacados o ambos no, ordenar por rating descendente
+      return b.rating - a.rating;
+    });
+  }, []);
+
+  const handleSelectPlace = (place: Place) => {
+    // Listo para engancharse con la Fase 4 (Modal de detalle)
+    // De momento mostramos el log o feedback en consola/interacción suave
+    console.log('Lugar seleccionado:', place.name);
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col font-sans antialiased selection:bg-amber-200">
-      {/* Barra superior Mobile-First */}
+      {/* Barra superior con clima nativo en Barranquilla */}
       <Header />
 
-      {/* Contenedor principal con ancho móvil perfecto (max-w-md centrado) */}
-      <main className="flex-1 w-full max-w-md mx-auto flex flex-col pb-12">
-        <HeroBanner totalPlaces={places.length} />
+      {/* Contenedor Mobile-First centrado */}
+      <main className="flex-1 w-full max-w-md mx-auto flex flex-col gap-3 pb-10">
+        <HeroBanner totalPlaces={sortedPlaces.length} />
 
-        {/* Sección temporal de Fase 1 para verificar la carga del JSON */}
-        <section className="px-4 mt-3">
-          <div className="bg-white rounded-xl border border-zinc-200 p-4 shadow-2xs">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
-              Fase 1: Datos cargados ({places.length} lugares listos)
-            </h2>
-            <div className="divide-y divide-zinc-100">
-              {places.map((place) => (
-                <div key={place.id} className="py-2 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-semibold text-zinc-800">{place.name}</span>
-                    <span className="block text-[11px] text-zinc-500">
-                      {place.category} • {place.municipality}
-                    </span>
-                  </div>
-                  {place.isFeatured && (
-                    <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
-                      ★ Destacado
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Catálogo con ordenamiento de destacados */}
+        <PlaceList
+          places={sortedPlaces}
+          onSelectPlace={handleSelectPlace}
+        />
       </main>
 
-      {/* Pie de página */}
+      {/* Footer */}
       <Footer />
     </div>
   );

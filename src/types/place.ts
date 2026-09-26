@@ -9,7 +9,8 @@ export interface Place {
   name: string;
   category: string;
   municipality: string;
-  priceRange: string;
+  priceLevel: string; // 'Entrada libre' | 'Económico' | 'Moderado' | 'Prémium'
+  priceDetail?: string; // Para la vista de detalle
   rating: number;
   shortDescription: string;
   fullDescription?: string;
