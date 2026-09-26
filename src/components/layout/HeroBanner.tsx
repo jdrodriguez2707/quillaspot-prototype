@@ -7,32 +7,32 @@ interface HeroBannerProps {
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({ totalPlaces }) => {
   return (
-    <section className="px-4 pt-4 pb-2">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-700 text-white p-4 shadow-sm">
+    <section className="px-0 pt-2 sm:pt-4 pb-1">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-700 text-white p-5 sm:p-7 md:p-8 shadow-sm">
         {/* Subtle decorative background circles */}
-        <div className="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/10 blur-xl pointer-events-none" />
-        <div className="absolute right-12 -top-6 w-20 h-20 rounded-full bg-yellow-300/20 blur-lg pointer-events-none" />
+        <div className="absolute -right-8 -bottom-8 w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="absolute right-24 -top-10 w-36 h-36 rounded-full bg-yellow-300/20 blur-xl pointer-events-none" />
 
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-[11px] font-medium text-amber-50 mb-2">
+        <div className="relative z-10 max-w-2xl">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-[11px] sm:text-xs font-semibold text-amber-50 mb-2.5">
             <Sparkles className="w-3.5 h-3.5 text-yellow-200" />
             <span>Descubre la magia del Caribe</span>
           </div>
 
-          <h1 className="text-xl font-black tracking-tight leading-snug">
-            ¿Qué hay pa' hacer en <span className="underline decoration-yellow-300 decoration-2 underline-offset-2">Quilla</span> hoy?
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-snug">
+            ¿Qué hay pa' hacer en <span className="underline decoration-yellow-300 decoration-3 underline-offset-3">Quilla</span> hoy?
           </h1>
 
-          <p className="text-xs text-amber-100/90 mt-1 line-clamp-2">
+          <p className="text-xs sm:text-sm text-amber-100/90 mt-2 max-w-xl leading-relaxed">
             Encuentra planes gastronómicos, culturales y de naturaleza en Barranquilla y municipios del Atlántico.
           </p>
 
-          <div className="mt-3 flex items-center gap-2.5 text-[11px] font-medium">
-            <span className="flex items-center gap-1.5 bg-black/20 backdrop-blur-xs px-2.5 py-1 rounded-lg text-white">
+          <div className="mt-4 flex flex-wrap items-center gap-2.5 text-[11px] sm:text-xs font-medium">
+            <span className="flex items-center gap-1.5 bg-black/20 backdrop-blur-xs px-3 py-1.5 rounded-xl text-white">
               <Compass className="w-3.5 h-3.5 text-yellow-300" />
               <span>{totalPlaces} lugares disponibles</span>
             </span>
-            <span className="flex items-center gap-1.5 bg-white/20 backdrop-blur-xs px-2.5 py-1 rounded-lg text-white font-semibold shadow-2xs">
+            <span className="flex items-center gap-1.5 bg-white/20 backdrop-blur-xs px-3 py-1.5 rounded-xl text-white font-semibold shadow-2xs">
               <Navigation className="w-3.5 h-3.5 text-yellow-200 fill-yellow-200" />
               <span>Clic y llega directo</span>
             </span>

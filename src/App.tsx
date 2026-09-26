@@ -8,6 +8,7 @@ import { CategoryFilter } from './components/filters/CategoryFilter';
 import { SearchBar } from './components/filters/SearchBar';
 import { PlaceList } from './components/places/PlaceList';
 import { PlaceDetailModal } from './components/detail/PlaceDetailModal';
+import { MobileExperienceModal } from './components/layout/MobileExperienceModal';
 import { Footer } from './components/layout/Footer';
 import { normalizeText } from './utils/text';
 
@@ -25,6 +26,8 @@ export default function App() {
   
   // Estado para el Fluid Bottom Sheet
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  // Estado para el modal de experiencia móvil en desktop
+  const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
 
   // Conteo dinámico de planes por categoría
   const categoryCounts = useMemo(() => {
@@ -98,26 +101,33 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F2F2F7] text-slate-900 flex flex-col font-sans antialiased selection:bg-amber-200">
       {/* Header estilo iOS Navigation Bar translúcido */}
-      <Header />
+      <Header onOpenQrModal={() => setIsQrModalOpen(true)} />
 
-      {/* Contenedor Mobile-First centrado */}
-      <main className="flex-1 w-full max-w-md mx-auto flex flex-col gap-3 pb-10">
+      {/* Contenedor Responsivo: Mobile, Tablet y Desktop (máximo 1200px con padding óptico) */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4 sm:gap-6 pb-12">
         <HeroBanner totalPlaces={places.length} />
 
-        {/* Barra de búsqueda interactiva */}
-        <SearchBar
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onClear={() => setSearchTerm('')}
-        />
+        {/* Barra de controles: Búsqueda y Filtros de categoría */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white/50 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl border border-black/[0.04] shadow-2xs">
+          {/* Barra de búsqueda interactiva */}
+          <div className="w-full md:max-w-md">
+            <SearchBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              onClear={() => setSearchTerm('')}
+            />
+          </div>
 
-        {/* Filtros de Categoría con scroll táctil horizontal */}
-        <CategoryFilter
-          categories={CATEGORIES}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          categoryCounts={categoryCounts}
-        />
+          {/* Filtros de Categoría adaptados a desktop/tablet */}
+          <div className="w-full md:w-auto overflow-hidden">
+            <CategoryFilter
+              categories={CATEGORIES}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+              categoryCounts={categoryCounts}
+            />
+          </div>
+        </div>
 
         {/* Catálogo ordenado y filtrado */}
         <PlaceList
@@ -140,6 +150,13 @@ export default function App() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Modal QR de experiencia móvil en desktop montado a nivel raíz */}
+      <MobileExperienceModal
+        isOpen={isQrModalOpen}
+        onClose={() => setIsQrModalOpen(false)}
+        targetUrl="https://quillaspot-prototype.vercel.app/"
+      />
     </div>
   );
 }

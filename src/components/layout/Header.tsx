@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Sun, CloudSun, CloudRain } from 'lucide-react';
+import { Sun, CloudSun, CloudRain, Smartphone, QrCode } from 'lucide-react';
+import { MobileExperienceModal } from './MobileExperienceModal';
 
 interface WeatherData {
   temperature: number;
   condition: string;
 }
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onOpenQrModal?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onOpenQrModal }) => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [isInternalQrOpen, setIsInternalQrOpen] = useState(false);
+
+  const handleOpenQr = () => {
+    if (onOpenQrModal) {
+      onOpenQrModal();
+    } else {
+      setIsInternalQrOpen(true);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -56,7 +70,7 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-30 w-full bg-white/70 backdrop-blur-xl saturate-180 border-b border-black/[0.06] border-t border-white/40 shadow-xs">
-      <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         {/* Brand Logo & iOS Style Large Title */}
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center text-white shadow-sm shadow-orange-500/20 active:scale-95 transition-transform duration-100 ease-out cursor-pointer">
@@ -74,16 +88,39 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Weather Pill estilo iOS Capsule */}
-        <div 
-          className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white/80 backdrop-blur-md border border-black/[0.06] px-2.5 py-1 rounded-full shadow-2xs active:scale-95 transition-transform duration-100 ease-out"
-          title={`Clima actual en Barranquilla: ${weather?.condition || 'Cargando...'} ${weather?.temperature ?? 31}°C`}
-        >
-          {renderWeatherIcon()}
-          <span className="tabular-nums font-semibold">{weather ? `${weather.temperature}°C` : '31°C'}</span>
-          <span className="text-[10px] font-medium text-slate-400">Baq</span>
+        {/* Acciones del Header: Botón Abrir en Celular (Desktop/Tablet) + Clima */}
+        <div className="flex items-center gap-2.5">
+          {/* Botón QR Abrir en Celular: Visible en sm/md/lg/xl, oculto en pantallas móviles pequeñas */}
+          <button
+            onClick={handleOpenQr}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 shadow-2xs active:scale-95 transition-all cursor-pointer"
+            title="Abrir QuillaSpot en tu celular escaneando código QR"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-amber-600" />
+            <span>Abrir en el celular</span>
+            <QrCode className="w-3 h-3 text-amber-500 ml-0.5" />
+          </button>
+
+          {/* Weather Pill estilo iOS Capsule */}
+          <div 
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white/80 backdrop-blur-md border border-black/[0.06] px-2.5 py-1 rounded-full shadow-2xs active:scale-95 transition-transform duration-100 ease-out"
+            title={`Clima actual en Barranquilla: ${weather?.condition || 'Cargando...'} ${weather?.temperature ?? 31}°C`}
+          >
+            {renderWeatherIcon()}
+            <span className="tabular-nums font-semibold">{weather ? `${weather.temperature}°C` : '31°C'}</span>
+            <span className="text-[10px] font-medium text-slate-400">Baq</span>
+          </div>
         </div>
       </div>
+
+      {/* Modal con código QR para abrir en celular (cuando no se maneja globalmente) */}
+      {!onOpenQrModal && (
+        <MobileExperienceModal
+          isOpen={isInternalQrOpen}
+          onClose={() => setIsInternalQrOpen(false)}
+          targetUrl="https://quillaspot-prototype.vercel.app/"
+        />
+      )}
     </header>
   );
 };

@@ -43,28 +43,28 @@ export const PlaceList: React.FC<PlaceListProps> = ({
   const featuredCount = places.filter((p) => p.isFeatured).length;
 
   return (
-    <section className="px-4 flex flex-col gap-3">
+    <section className="px-0 flex flex-col gap-3.5">
       {/* Encabezado del catálogo estilo iOS Group Header */}
-      <div className="flex items-center justify-between pt-1">
-        <div className="flex items-center gap-1.5">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+      <div className="flex items-center justify-between pt-1 px-1">
+        <div className="flex items-center gap-2">
+          <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400">
             Planes recomendados
           </h2>
-          <span className="text-[11px] font-bold text-slate-500 bg-black/[0.05] px-2 py-0.2 rounded-full tabular-nums">
+          <span className="text-[11px] sm:text-xs font-bold text-slate-500 bg-black/[0.05] px-2.5 py-0.5 rounded-full tabular-nums">
             {places.length}
           </span>
         </div>
 
         {featuredCount > 0 && (
-          <span className="text-[11px] font-semibold text-amber-700 flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-amber-500 fill-amber-500" />
+          <span className="text-[11px] sm:text-xs font-semibold text-amber-700 flex items-center gap-1 bg-amber-500/10 px-2.5 py-0.5 rounded-full">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
             {featuredCount} destacados
           </span>
         )}
       </div>
 
-      {/* Grid de tarjetas táctiles */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      {/* Grid responsivo: 1 col móvil, 2 cols tablet (sm/md), 3 cols desktop (lg/xl) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {places.map((place) => (
           <PlaceCard
             key={place.id}

@@ -33,8 +33,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   return (
     <div className="w-full">
-      {/* Scroll táctil horizontal iOS Segmented Control */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1.5 px-4 scroll-smooth">
+      {/* Scroll táctil horizontal en móviles y flex envolvente limpio en desktop/tablet */}
+      <div className="flex items-center md:justify-end gap-2 overflow-x-auto no-scrollbar py-0.5 px-0.5 scroll-smooth">
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat;
           const count = categoryCounts[cat] ?? 0;

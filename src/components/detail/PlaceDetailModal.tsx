@@ -145,54 +145,54 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
   const isFreeEntry = place.priceLevel.toLowerCase().includes('libre');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6">
       {/* Backdrop Scrim con opacidad fluida y tap to dismiss */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18, ease: 'easeOut' }}
-        className="fixed inset-0 bg-black/45 backdrop-blur-xs"
+        className="fixed inset-0 bg-black/50 backdrop-blur-xs"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Apple iOS Fluid Bottom Sheet con Direct Manipulation 1:1 */}
+      {/* Apple iOS Fluid Bottom Sheet en móviles / Dialog flotante en tablet y desktop */}
       <motion.div
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-place-title"
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
+        initial={{ y: '100%', opacity: 0.6 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: '100%', opacity: 0 }}
         transition={iosSpringMomentum}
         drag="y"
         dragDirectionLock
         dragConstraints={{ top: 0 }}
         dragElastic={{ top: 0.05, bottom: 0.6 }}
         onDragEnd={handleDragEnd}
-        className="relative z-10 w-full max-w-md bg-white rounded-t-[32px] max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border-t border-white/40 touch-pan-y"
+        className="relative z-10 w-full max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border-t sm:border border-white/50 touch-pan-y"
       >
         {/* Cabecera / Imagen con esquinas redondeadas continuas y grab handle integrado */}
-        <div className="relative aspect-16/10 w-full shrink-0 bg-slate-950 rounded-t-[32px] overflow-hidden select-none">
+        <div className="relative aspect-16/10 sm:aspect-16/9 w-full shrink-0 bg-slate-950 rounded-t-[32px] sm:rounded-t-3xl overflow-hidden select-none">
           <img
             src={displayImage}
             alt={place.name}
             draggable={false}
             onError={() => setImageError(true)}
-            className="w-full h-full object-cover rounded-t-[32px] pointer-events-none select-none"
+            className="w-full h-full object-cover rounded-t-[32px] sm:rounded-t-3xl pointer-events-none select-none"
           />
 
           {/* Gradiente superior e inferior para legibilidad y profundidad de materiales */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50 pointer-events-none rounded-t-[32px]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50 pointer-events-none rounded-t-[32px] sm:rounded-t-3xl" />
 
-          {/* iOS Grab Handle - Flotante sobre la parte superior de la imagen */}
-          <div className="absolute top-2.5 inset-x-0 flex justify-center items-center pointer-events-none z-20">
+          {/* iOS Grab Handle - Visible en móvil para guiar la interacción física */}
+          <div className="absolute top-2.5 inset-x-0 flex sm:hidden justify-center items-center pointer-events-none z-20">
             <div className="w-10 h-1.5 bg-white/70 backdrop-blur-md rounded-full shadow-xs" />
           </div>
 
           {/* Barra superior de acciones (Cerrar y Compartir) */}
-          <div className="absolute top-5 inset-x-3.5 flex items-center justify-between z-20">
+          <div className="absolute top-4 sm:top-5 inset-x-3.5 sm:inset-x-5 flex items-center justify-between z-20">
             <button
               onClick={onClose}
               className="w-9 h-9 rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 flex items-center justify-center text-white transition-transform duration-100 ease-out cursor-pointer shadow-sm active:scale-95"
@@ -244,36 +244,36 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
         </div>
 
         {/* Contenido scrolleable del detalle */}
-        <div className="p-4 sm:p-5 overflow-y-auto space-y-4 text-slate-800">
+        <div className="p-5 sm:p-6 overflow-y-auto space-y-4 text-slate-800">
           {/* Título principal y ubicación con tracking negativo SF Pro */}
           <div>
-            <h2 id="modal-place-title" className="text-xl font-bold tracking-[-0.02em] text-slate-900 leading-tight">
+            <h2 id="modal-place-title" className="text-xl sm:text-2xl font-bold tracking-[-0.02em] text-slate-900 leading-tight">
               {place.name}
             </h2>
-            <p className="text-xs text-slate-500 flex items-center gap-1 mt-1 font-medium tracking-normal">
+            <p className="text-xs sm:text-sm text-slate-500 flex items-center gap-1.5 mt-1.5 font-medium tracking-normal">
               <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
               <span>{place.address || `${place.municipality}, Atlántico`}</span>
             </p>
           </div>
 
           {/* Caja destacada: Presupuesto estimado / Rango de precios */}
-          <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 flex items-start gap-3.5">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
               <Wallet className="w-4 h-4" />
             </div>
-            <div className="flex-1 text-xs">
+            <div className="flex-1 text-xs sm:text-sm">
               <div className="flex items-center gap-2">
                 {!isFreeEntry && (
                   <span className="font-bold text-slate-900">Rango de precios:</span>
                 )}
-                <span className={`inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[10px] font-bold ${getPriceBadgeStyle(place.priceLevel)}`}>
+                <span className={`inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${getPriceBadgeStyle(place.priceLevel)}`}>
                   <span className="w-3 h-3 rounded-full bg-white/25 flex items-center justify-center text-[8px] font-black text-white shrink-0 leading-none">
                     $
                   </span>
                   <span>{place.priceLevel}</span>
                 </span>
               </div>
-              <p className="text-slate-600 mt-1 font-medium leading-relaxed">
+              <p className="text-slate-600 mt-1.5 font-medium leading-relaxed">
                 {place.priceDetail || 'Consulta consumos o actividades directamente en el lugar.'}
               </p>
             </div>
@@ -281,7 +281,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
 
           {/* Descripción Completa */}
           <div className="space-y-1.5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
               <Info className="w-3.5 h-3.5" />
               Sobre este plan
             </h3>
@@ -297,7 +297,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
                 {place.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[11px] font-medium text-amber-900 bg-amber-100/60 border border-amber-200/50 px-2.5 py-1 rounded-lg"
+                    className="text-[11px] sm:text-xs font-medium text-amber-900 bg-amber-100/60 border border-amber-200/50 px-2.5 py-1 rounded-lg"
                   >
                     #{tag}
                   </span>
@@ -308,13 +308,13 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
         </div>
 
         {/* Botones de Acción Vitales (CTAs directos con respuesta instantánea pointer-down) */}
-        <div className="p-4 bg-white/90 backdrop-blur-md border-t border-black/[0.06] shrink-0 grid grid-cols-2 gap-2.5">
+        <div className="p-4 sm:p-5 bg-white/90 backdrop-blur-md border-t border-black/[0.06] shrink-0 grid grid-cols-2 gap-3">
           {/* Botón Secundario: Cómo llegar (Google Maps) */}
           <a
             href={place.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-semibold transition-transform duration-100 ease-out active:scale-95 text-center shadow-2xs"
+            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs sm:text-sm font-semibold transition-transform duration-100 ease-out active:scale-95 text-center shadow-2xs cursor-pointer"
           >
             <Navigation className="w-4 h-4 text-slate-700" />
             <span>Cómo llegar</span>
@@ -325,7 +325,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
             href={contactUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-semibold transition-transform duration-100 ease-out shadow-sm shadow-[#25D366]/20 active:scale-95 text-center"
+            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs sm:text-sm font-semibold transition-transform duration-100 ease-out shadow-sm shadow-[#25D366]/20 active:scale-95 text-center cursor-pointer"
           >
             <MessageCircle className="w-4 h-4 fill-white" />
             <span>Contactar</span>
