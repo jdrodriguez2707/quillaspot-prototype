@@ -70,27 +70,30 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onSelectPlace }) =>
         {/* Gradiente sutil para legibilidad de badges */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/35 pointer-events-none" />
 
-        {/* Badge superior izquierdo: ★ Recomendado / Categoría */}
-        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 items-center">
-          {place.isFeatured ? (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500 text-white shadow-xs tracking-wide">
-              <Sparkles className="w-3 h-3 fill-white" />
-              <span>★ Recomendado</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/55 backdrop-blur-xs text-white">
-              {place.category}
-            </span>
-          )}
-        </div>
+        {/* Barra superior de badges: perfectamente alineados en la misma fila y altura */}
+        <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between pointer-events-none">
+          {/* Badge izquierdo: ★ Recomendado o Categoría */}
+          <div>
+            {place.isFeatured ? (
+              <span className="h-6 inline-flex items-center gap-1 px-2.5 rounded-full text-[11px] font-bold bg-amber-500 text-white shadow-xs tracking-wide">
+                <Sparkles className="w-3 h-3 fill-white" />
+                <span>★ Recomendado</span>
+              </span>
+            ) : (
+              <span className="h-6 inline-flex items-center px-2.5 rounded-full text-[11px] font-semibold bg-black/60 backdrop-blur-xs text-white shadow-xs">
+                {place.category}
+              </span>
+            )}
+          </div>
 
-        {/* Badge superior derecho: Nivel de precio con color distintivo */}
-        <div className="absolute top-2.5 right-2.5">
-          <span
-            className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide border shadow-xs backdrop-blur-xs ${priceBadgeClass}`}
-          >
-            {place.priceLevel}
-          </span>
+          {/* Badge derecho: Nivel de precio con idéntica altura (h-6) y centrado vertical */}
+          <div>
+            <span
+              className={`h-6 inline-flex items-center px-2.5 rounded-full text-[11px] font-semibold tracking-wide border shadow-xs backdrop-blur-xs ${priceBadgeClass}`}
+            >
+              {place.priceLevel}
+            </span>
+          </div>
         </div>
 
         {/* Información superpuesta inferior sobre la imagen (Municipio y Calificación) */}

@@ -1,44 +1,121 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import rawPlaces from './data/places.json';
-import { Place } from './types/place';
+import { Place, PlaceCategory } from './types/place';
 import { Header } from './components/layout/Header';
 import { HeroBanner } from './components/layout/HeroBanner';
+import { CategoryFilter } from './components/filters/CategoryFilter';
+import { SearchBar } from './components/filters/SearchBar';
 import { PlaceList } from './components/places/PlaceList';
 import { Footer } from './components/layout/Footer';
+import { normalizeText } from './utils/text';
+
+const CATEGORIES: PlaceCategory[] = [
+  'Todos',
+  'Gastronomía',
+  'Ecoturismo',
+  'Cultura y Ocio',
+];
 
 export default function App() {
-  // Lógica de ordenamiento Fase 2:
-  // Los lugares con isFeatured: true DEBEN renderizarse primero en la lista
-  const sortedPlaces = useMemo(() => {
-    const list = [...(rawPlaces as Place[])];
-    return list.sort((a, b) => {
-      // 1. Prioridad a destacados (isFeatured: true primero)
+  const [places] = useState<Place[]>(rawPlaces as Place[]);
+  const [selectedCategory, setSelectedCategory] = useState<PlaceCategory>('Todos');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  // Conteo dinámico de planes por categoría
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      Todos: places.length,
+    };
+    places.forEach((p) => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, [places]);
+
+  // Filtrado resiliente con normalización de acentos y campos completos
+  const filteredAndSortedPlaces = useMemo(() => {
+    let result = [...places];
+
+    // 1. Filtrar por categoría seleccionada en los botones
+    if (selectedCategory !== 'Todos') {
+      result = result.filter(
+        (p) => normalizeText(p.category) === normalizeText(selectedCategory)
+      );
+    }
+
+    // 2. Filtrar por término de búsqueda (insensible a acentos/tildes y mayúsculas)
+    const normalizedQuery = normalizeText(searchTerm);
+    if (normalizedQuery !== '') {
+      result = result.filter((p) => {
+        const matchName = normalizeText(p.name).includes(normalizedQuery);
+        const matchCategory = normalizeText(p.category).includes(normalizedQuery);
+        const matchMunicipality = normalizeText(p.municipality).includes(normalizedQuery);
+        const matchShortDesc = normalizeText(p.shortDescription).includes(normalizedQuery);
+        const matchFullDesc = normalizeText(p.fullDescription).includes(normalizedQuery);
+        const matchPriceLevel = normalizeText(p.priceLevel).includes(normalizedQuery);
+        const matchTags = p.tags?.some((t) => normalizeText(t).includes(normalizedQuery));
+
+        return (
+          matchName ||
+          matchCategory ||
+          matchMunicipality ||
+          matchShortDesc ||
+          matchFullDesc ||
+          matchPriceLevel ||
+          matchTags
+        );
+      });
+    }
+
+    // 3. Regla estricta de negocio: isFeatured: true primero, luego mayor rating
+    return result.sort((a, b) => {
       if (a.isFeatured && !b.isFeatured) return -1;
       if (!a.isFeatured && b.isFeatured) return 1;
-      // 2. Si ambos son destacados o ambos no, ordenar por rating descendente
       return b.rating - a.rating;
     });
-  }, []);
+  }, [places, selectedCategory, searchTerm]);
+
+  const handleResetFilters = () => {
+    setSelectedCategory('Todos');
+    setSearchTerm('');
+  };
 
   const handleSelectPlace = (place: Place) => {
-    // Listo para engancharse con la Fase 4 (Modal de detalle)
-    // De momento mostramos el log o feedback en consola/interacción suave
-    console.log('Lugar seleccionado:', place.name);
+    console.log('Lugar seleccionado para detalle:', place.name);
   };
+
+  const hasActiveFilters = selectedCategory !== 'Todos' || searchTerm.trim() !== '';
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col font-sans antialiased selection:bg-amber-200">
-      {/* Barra superior con clima nativo en Barranquilla */}
+      {/* Header con clima en tiempo real de Barranquilla */}
       <Header />
 
       {/* Contenedor Mobile-First centrado */}
       <main className="flex-1 w-full max-w-md mx-auto flex flex-col gap-3 pb-10">
-        <HeroBanner totalPlaces={sortedPlaces.length} />
+        <HeroBanner totalPlaces={places.length} />
 
-        {/* Catálogo con ordenamiento de destacados */}
+        {/* Barra de búsqueda interactiva */}
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          onClear={() => setSearchTerm('')}
+        />
+
+        {/* Filtros de Categoría con scroll táctil horizontal */}
+        <CategoryFilter
+          categories={CATEGORIES}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          categoryCounts={categoryCounts}
+        />
+
+        {/* Catálogo ordenado y filtrado */}
         <PlaceList
-          places={sortedPlaces}
+          places={filteredAndSortedPlaces}
           onSelectPlace={handleSelectPlace}
+          onResetFilters={handleResetFilters}
+          hasActiveFilters={hasActiveFilters}
         />
       </main>
 
