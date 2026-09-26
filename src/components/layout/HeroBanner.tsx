@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Sparkles } from 'lucide-react';
+import { Compass, Sparkles, Navigation } from 'lucide-react';
 
 interface HeroBannerProps {
   totalPlaces: number;
@@ -27,12 +27,15 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ totalPlaces }) => {
             Encuentra planes gastronómicos, culturales y de naturaleza en Barranquilla y municipios del Atlántico.
           </p>
 
-          <div className="mt-3 flex items-center gap-3 text-[11px] text-amber-100 font-medium">
-            <span className="flex items-center gap-1 bg-black/20 px-2 py-0.5 rounded-md">
-              <Compass className="w-3 h-3 text-yellow-300" />
-              {totalPlaces} lugares disponibles
+          <div className="mt-3 flex items-center gap-2.5 text-[11px] font-medium">
+            <span className="flex items-center gap-1.5 bg-black/20 backdrop-blur-xs px-2.5 py-1 rounded-lg text-white">
+              <Compass className="w-3.5 h-3.5 text-yellow-300" />
+              <span>{totalPlaces} lugares disponibles</span>
             </span>
-            <span className="text-amber-200/80">⚡ Clic y llega directo</span>
+            <span className="flex items-center gap-1.5 bg-white/20 backdrop-blur-xs px-2.5 py-1 rounded-lg text-white font-semibold shadow-2xs">
+              <Navigation className="w-3.5 h-3.5 text-yellow-200 fill-yellow-200" />
+              <span>Clic y llega directo</span>
+            </span>
           </div>
         </div>
       </div>
