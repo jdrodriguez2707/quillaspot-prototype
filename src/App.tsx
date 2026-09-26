@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import rawPlaces from './data/places.json';
 import { Place, PlaceCategory } from './types/place';
 import { Header } from './components/layout/Header';
@@ -22,7 +23,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory>('Todos');
   const [searchTerm, setSearchTerm] = useState<string>('');
   
-  // Estado para la vista en detalle (Fase 4)
+  // Estado para el Fluid Bottom Sheet
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   // Conteo dinámico de planes por categoría
@@ -127,11 +128,15 @@ export default function App() {
         />
       </main>
 
-      {/* Modal / Sheet de Vista en Detalle y Botones de Conversión (Fase 4) */}
-      <PlaceDetailModal
-        place={selectedPlace}
-        onClose={handleCloseModal}
-      />
+      {/* Apple Fluid Bottom Sheet de Detalle con AnimatePresence para salida animada */}
+      <AnimatePresence>
+        {selectedPlace && (
+          <PlaceDetailModal
+            place={selectedPlace}
+            onClose={handleCloseModal}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <Footer />

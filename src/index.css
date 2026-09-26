@@ -10,6 +10,11 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
   body {
     /* iOS Grouped Background */
     background-color: #F2F2F7;
@@ -20,7 +25,53 @@
   }
 }
 
-/* Ocultar scrollbars manteniendo scroll fluido */
+/* Scrollbar estilo Apple / iOS / macOS minimalista:
+   - Recorrido (track) 100% transparente.
+   - Sin flechas ni botones de arriba/abajo.
+   - Solo la cápsula (thumb) sutil y redondeada visible.
+*/
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 9999px;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Ocultar botones/flechas de scroll en cualquier navegador WebKit */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Firefox: scrollbar fino y transparente */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+/* Ocultar completamente el scrollbar cuando el modal de detalle está abierto */
+body.modal-open::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+body.modal-open {
+  scrollbar-width: none !important;
+}
+
+/* Ocultar scrollbars manteniendo scroll fluido en carruseles */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

@@ -15,12 +15,12 @@ export const iosSpringDefault: Transition = {
   mass: 0.8,
 };
 
-// Resorte con rebote sutil para gestos con velocidad/inercia
+// Resorte para Bottom Sheet de iOS: ágil, reactivo y con settle natural
 export const iosSpringMomentum: Transition = {
   type: 'spring',
-  damping: 24,
-  stiffness: 280,
-  mass: 1,
+  damping: 32,
+  stiffness: 380,
+  mass: 0.8,
 };
 
 // Resorte ultra-reactivo para microinteracciones de pills y selecciones
