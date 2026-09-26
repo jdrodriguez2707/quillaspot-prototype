@@ -43,33 +43,15 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  // Bloqueo de scroll manteniendo posición sin causar saltos de layout
+  // Bloqueo de scroll eficiente en móvil sin provocar reflow ni repintados del DOM
   useEffect(() => {
     if (place) {
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
-    } else {
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.classList.remove('modal-open');
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
     }
     return () => {
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      document.body.style.overflow = '';
       document.body.classList.remove('modal-open');
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
     };
   }, [place]);
 
@@ -146,32 +128,32 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6">
-      {/* Backdrop Scrim con opacidad fluida y tap to dismiss */}
+      {/* Backdrop Scrim: sin backdrop-blur pesado para 60-120fps puros en Android/iOS */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.18, ease: 'easeOut' }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-xs"
+        transition={{ duration: 0.15, ease: 'easeOut' }}
+        className="fixed inset-0 bg-black/60"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Apple iOS Fluid Bottom Sheet en móviles / Dialog flotante en tablet y desktop */}
+      {/* Apple iOS Fluid Bottom Sheet en móviles / Dialog flotante en tablet y desktop con GPU acceleration */}
       <motion.div
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-place-title"
-        initial={{ y: '100%', opacity: 0.6 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: '100%', opacity: 0 }}
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
         transition={iosSpringMomentum}
         drag="y"
         dragDirectionLock
         dragConstraints={{ top: 0 }}
         dragElastic={{ top: 0.05, bottom: 0.6 }}
         onDragEnd={handleDragEnd}
-        className="relative z-10 w-full max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border-t sm:border border-white/50 touch-pan-y"
+        className="relative z-10 w-full max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border-t sm:border border-white/50 touch-pan-y will-change-transform transform-gpu"
       >
         {/* Cabecera / Imagen con esquinas redondeadas continuas y grab handle integrado */}
         <div className="relative aspect-16/10 sm:aspect-16/9 w-full shrink-0 bg-slate-950 rounded-t-[32px] sm:rounded-t-3xl overflow-hidden select-none">

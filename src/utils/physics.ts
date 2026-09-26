@@ -15,12 +15,12 @@ export const iosSpringDefault: Transition = {
   mass: 0.8,
 };
 
-// Resorte para Bottom Sheet de iOS: ágil, reactivo y con settle natural
+// Resorte para Bottom Sheet de iOS: Ultra rápido (240ms aprox), reactivo y acelerado por GPU
 export const iosSpringMomentum: Transition = {
   type: 'spring',
-  damping: 32,
-  stiffness: 380,
-  mass: 0.8,
+  damping: 30,
+  stiffness: 420,
+  mass: 0.5,
 };
 
 // Resorte ultra-reactivo para microinteracciones de pills y selecciones
