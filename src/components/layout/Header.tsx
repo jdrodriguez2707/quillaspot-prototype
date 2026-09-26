@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Sun, CloudSun, CloudRain, MapPin } from 'lucide-react';
+import { Sun, CloudSun, CloudRain } from 'lucide-react';
 
 interface WeatherData {
   temperature: number;
@@ -13,7 +13,6 @@ export const Header: React.FC = () => {
     let isMounted = true;
 
     // Coordenadas fijas de Barranquilla: lat 10.9685, lon -74.7813
-    // Open-Meteo: Gratuita, sin API key, no pide permisos de ubicación al usuario
     fetch(
       'https://api.open-meteo.com/v1/forecast?latitude=10.9685&longitude=-74.7813&current=temperature_2m,weather_code'
     )
@@ -35,7 +34,6 @@ export const Header: React.FC = () => {
       })
       .catch(() => {
         if (isMounted) {
-          // Fallback predeterminado típico de Barranquilla en caso de fallo de red
           setWeather({ temperature: 31, condition: 'Soleado' });
         }
       });
@@ -57,37 +55,33 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-100 shadow-xs">
+    <header className="sticky top-0 z-30 w-full bg-white/70 backdrop-blur-xl saturate-180 border-b border-black/[0.06] border-t border-white/40 shadow-xs">
       <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Brand Logo & Name */}
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center text-white shadow-sm shadow-orange-300">
-            <Sun className="w-5 h-5 fill-yellow-200 text-yellow-100" />
+        {/* Brand Logo & iOS Style Large Title */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center text-white shadow-sm shadow-orange-500/20 active:scale-95 transition-transform duration-100 ease-out cursor-pointer">
+            <Sun className="w-5 h-5 fill-yellow-100 text-yellow-50" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-extrabold text-lg tracking-tight text-zinc-900">
+            <div className="flex items-baseline gap-1.5 leading-tight">
+              <h1 className="text-xl font-bold tracking-[-0.02em] text-slate-900">
                 Quilla<span className="text-amber-500">Spot</span>
-              </span>
-              <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                Atlántico
-              </span>
+              </h1>
             </div>
-            <p className="text-[11px] text-zinc-500 flex items-center gap-1 mt-0.5">
-              <MapPin className="w-3 h-3 text-amber-600 inline" />
-              Barranquilla & Alrededores
+            <p className="text-[11px] font-medium tracking-normal text-slate-500 leading-none mt-0.5">
+              Arma tu plan en el Atlántico
             </p>
           </div>
         </div>
 
-        {/* Indicador del Clima en Barranquilla (JS Nativo fetch, cero permisos, cero API key) */}
+        {/* Weather Pill estilo iOS Capsule */}
         <div 
-          className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 bg-amber-50/80 border border-amber-200/70 px-2.5 py-1 rounded-full shadow-2xs"
+          className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white/80 backdrop-blur-md border border-black/[0.06] px-2.5 py-1 rounded-full shadow-2xs active:scale-95 transition-transform duration-100 ease-out"
           title={`Clima actual en Barranquilla: ${weather?.condition || 'Cargando...'} ${weather?.temperature ?? 31}°C`}
         >
           {renderWeatherIcon()}
-          <span>{weather ? `${weather.temperature}°C` : '31°C'}</span>
-          <span className="text-[10px] font-medium text-amber-800/80 hidden xs:inline">Baq</span>
+          <span className="tabular-nums font-semibold">{weather ? `${weather.temperature}°C` : '31°C'}</span>
+          <span className="text-[10px] font-medium text-slate-400">Baq</span>
         </div>
       </div>
     </header>

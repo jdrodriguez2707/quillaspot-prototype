@@ -95,8 +95,8 @@ export default function App() {
   const hasActiveFilters = selectedCategory !== 'Todos' || searchTerm.trim() !== '';
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col font-sans antialiased selection:bg-amber-200">
-      {/* Header con clima en tiempo real de Barranquilla */}
+    <div className="min-h-screen bg-[#F2F2F7] text-slate-900 flex flex-col font-sans antialiased selection:bg-amber-200">
+      {/* Header estilo iOS Navigation Bar translúcido */}
       <Header />
 
       {/* Contenedor Mobile-First centrado */}
