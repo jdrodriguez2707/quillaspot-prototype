@@ -1,0 +1,7 @@
+{
+  "name": "QuillaSpot",
+  "description": "Tu guía mobile-first para descubrir planes turísticos, gastronómicos y de ocio en Barranquilla y el Atlántico con cero login.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
