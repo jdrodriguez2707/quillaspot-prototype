@@ -1,6 +1,8 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Utensils, Trees, Landmark, Compass } from 'lucide-react';
 import { PlaceCategory } from '../../types/place';
+import { iosSpringSnappy } from '../../utils/physics';
 
 interface CategoryFilterProps {
   categories: PlaceCategory[];
@@ -9,7 +11,7 @@ interface CategoryFilterProps {
   categoryCounts: Record<string, number>;
 }
 
-// Iconografía contextual según la categoría
+// Iconografía refinada de iOS
 const getCategoryIcon = (category: PlaceCategory) => {
   switch (category) {
     case 'Gastronomía':
@@ -31,8 +33,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   return (
     <div className="w-full">
-      {/* Scroll horizontal fluido con padding táctil Mobile-First */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-4 scroll-smooth">
+      {/* Scroll táctil horizontal iOS Segmented Control */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1.5 px-4 scroll-smooth">
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat;
           const count = categoryCounts[cat] ?? 0;
@@ -41,24 +43,36 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             <button
               key={cat}
               onClick={() => onSelectCategory(cat)}
-              className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-95 ${
+              className={`relative shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold cursor-pointer select-none active:scale-[0.96] transition-transform duration-100 ease-out ${
                 isSelected
-                  ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25 ring-2 ring-amber-400/40'
-                  : 'bg-white text-zinc-600 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50'
+                  ? 'text-white'
+                  : 'bg-white/80 text-slate-600 border border-black/[0.04] backdrop-blur-md shadow-2xs hover:bg-white'
               }`}
             >
-              <span className={isSelected ? 'text-white' : 'text-amber-600'}>
-                {getCategoryIcon(cat)}
-              </span>
-              <span>{cat}</span>
-              <span
-                className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
-                  isSelected
-                    ? 'bg-white/20 text-white'
-                    : 'bg-zinc-100 text-zinc-500'
-                }`}
-              >
-                {count}
+              {/* Indicador con resorte iOS layoutId animado */}
+              {isSelected && (
+                <motion.div
+                  layoutId="activeCategoryPill"
+                  className="absolute inset-0 bg-slate-900 rounded-full shadow-sm shadow-slate-900/20"
+                  transition={iosSpringSnappy}
+                />
+              )}
+
+              {/* Contenido sobre el indicador */}
+              <span className="relative z-10 flex items-center gap-1.5">
+                <span className={isSelected ? 'text-amber-400' : 'text-slate-400'}>
+                  {getCategoryIcon(cat)}
+                </span>
+                <span className="tracking-tight">{cat}</span>
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums ${
+                    isSelected
+                      ? 'bg-white/20 text-white'
+                      : 'bg-black/[0.05] text-slate-500'
+                  }`}
+                >
+                  {count}
+                </span>
               </span>
             </button>
           );
