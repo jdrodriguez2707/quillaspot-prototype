@@ -7,6 +7,7 @@ import {
   Sparkles, 
   Navigation, 
   MessageCircle, 
+  Instagram,
   Info, 
   Wallet, 
   Share2, 
@@ -83,10 +84,24 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
 
   if (!place) return null;
 
-  // Construcción del enlace nativo a WhatsApp con codificación adecuada de URI
-  const whatsappUrl = `https://wa.me/${place.whatsapp}?text=${encodeURIComponent(
-    place.whatsappMessage || `¡Hola! Los vi a través de QuillaSpot y me gustaría recibir más información sobre ${place.name}.`
-  )}`;
+  // Detección dinámica de canal de contacto: Instagram (Direct Message) vs WhatsApp
+  const isInstagram = place.whatsapp.includes('instagram.com');
+  let contactUrl = '';
+
+  if (isInstagram) {
+    // Extraer el username o handle de Instagram (ej: caimandelrio)
+    const match = place.whatsapp.match(/instagram\.com\/([a-zA-Z0-9_.-]+)/i);
+    const username = match && match[1] && !['direct', 'p', 'reel', 'stories'].includes(match[1]) ? match[1] : '';
+    // Enlace universal a Instagram Direct Messages
+    contactUrl = username 
+      ? `https://ig.me/m/${username}` 
+      : place.whatsapp;
+  } else {
+    const cleanPhone = place.whatsapp.replace(/\D/g, '');
+    contactUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+      place.whatsappMessage || `¡Hola! Los vi a través de QuillaSpot y me gustaría recibir más información sobre ${place.name}.`
+    )}`;
+  }
 
   const displayImage = imageError
     ? 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'
@@ -302,9 +317,9 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
             <span>Cómo llegar</span>
           </a>
 
-          {/* Botón Primario: Contactar (WhatsApp oficial #25D366) */}
+          {/* Botón Primario: Contactar (Verde con respuesta instantánea) */}
           <a
-            href={whatsappUrl}
+            href={contactUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-semibold transition-transform duration-100 ease-out shadow-sm shadow-[#25D366]/20 active:scale-95 text-center"

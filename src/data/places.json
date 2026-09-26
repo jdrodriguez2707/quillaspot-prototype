@@ -13,7 +13,7 @@
     "tags": ["Familiar", "Vista al Río", "Pet Friendly", "Comida Típica"],
     "address": "Gran Malecón del Río, Sector Puerta de Oro, Barranquilla",
     "mapsUrl": "https://maps.google.com/?q=Caiman+del+Rio+Barranquilla",
-    "whatsapp": "573001234567",
+    "whatsapp": "https://www.instagram.com/caimandelrio/",
     "whatsappMessage": "¡Hola! Los encontré en QuillaSpot y me gustaría consultar el menú y horarios de atención.",
     "isFeatured": true
   },
@@ -31,7 +31,7 @@
     "tags": ["Atardecer", "Patrimonio", "Vista al Mar", "Fotografía"],
     "address": "Corregimiento de Salgar, Puerto Colombia, Atlántico",
     "mapsUrl": "https://maps.google.com/?q=Castillo+de+Salgar+Atlantico",
-    "whatsapp": "573109876543",
+    "whatsapp": "https://www.instagram.com/castillosalgar/",
     "whatsappMessage": "¡Hola! Los vi a través de QuillaSpot. ¿Tienen disponibilidad de mesas para este fin de semana?",
     "isFeatured": true
   },
@@ -49,7 +49,7 @@
     "tags": ["Cultura", "Música en Vivo", "Caribe Gourmet", "Histórico"],
     "address": "Cra. 43 #59-03, Barrio Boston, Barranquilla",
     "mapsUrl": "https://maps.google.com/?q=Restaurante+La+Cueva+Barranquilla",
-    "whatsapp": "573012345678",
+    "whatsapp": "+573165281603",
     "whatsappMessage": "¡Hola Restaurante La Cueva! Vi su perfil en QuillaSpot y quisiera consultar sobre reservas y eventos culturales.",
     "isFeatured": false
   },
@@ -67,7 +67,7 @@
     "tags": ["Naturaleza", "Senderismo", "Avistamiento de Aves", "Familiar"],
     "address": "Corregimiento La Playa, Vía a Bocas de Ceniza, Barranquilla",
     "mapsUrl": "https://maps.google.com/?q=Ecoparque+Cienaga+de+Mallorquin",
-    "whatsapp": "573204567890",
+    "whatsapp": "+573042499937",
     "whatsappMessage": "¡Hola! Vi la información de Mallorquín en QuillaSpot. ¿Me podrían confirmar los horarios de ingreso para este fin de semana?",
     "isFeatured": true
   },
@@ -85,7 +85,7 @@
     "tags": ["Artesanías", "Pueblo Patrimonio", "Mirador", "Cultura Local"],
     "address": "Plaza Principal, Usiacurí, Atlántico",
     "mapsUrl": "https://maps.google.com/?q=Usiacuri+Atlantico",
-    "whatsapp": "573156789012",
+    "whatsapp": "https://www.instagram.com/usiacuritours/",
     "whatsappMessage": "¡Buenas! Los vi en QuillaSpot. Quisiera contactar un guía local o información sobre los talleres de artesanías en Usiacurí.",
     "isFeatured": false
   },
@@ -103,7 +103,7 @@
     "tags": ["Playa", "Historia", "Comida de Mar", "Atardecer"],
     "address": "Malecón del Mar, Plaza Principal, Puerto Colombia, Atlántico",
     "mapsUrl": "https://maps.google.com/?q=Muelle+de+Puerto+Colombia",
-    "whatsapp": "573187654321",
+    "whatsapp": "https://www.instagram.com/alcaldiadepuerto/",
     "whatsappMessage": "¡Hola! Vi el plan en QuillaSpot. ¿Qué actividades culturales o puestos gastronómicos tienen abiertos hoy en la plaza?",
     "isFeatured": false
   }
