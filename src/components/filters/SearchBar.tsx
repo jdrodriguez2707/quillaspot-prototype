@@ -15,15 +15,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className="w-full">
       <div className="relative flex items-center">
-        <div className="absolute left-3.5 text-slate-400 pointer-events-none flex items-center">
-          <Search className="w-4 h-4" />
+        <div className="absolute left-3.5 text-amber-600 pointer-events-none flex items-center z-10">
+          <Search className="w-4 h-4 stroke-[2.5]" />
         </div>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Buscar por nombre, municipio (ej: Puerto Colombia)..."
-          className="w-full pl-10 pr-9 py-2.5 bg-white/90 backdrop-blur-md border border-black/[0.06] rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all shadow-2xs font-normal"
+          className="w-full pl-10 pr-9 py-2.5 bg-white/90 backdrop-blur-md border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-2xs font-medium"
         />
         {searchTerm && (
           <button

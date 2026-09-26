@@ -122,6 +122,7 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
             )}
           </button>
 
+          {/*
           <a
             href={targetUrl}
             target="_blank"
@@ -131,6 +132,7 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
           >
             <ExternalLink className="w-4 h-4" />
           </a>
+          */}
         </div>
       </div>
     </div>
