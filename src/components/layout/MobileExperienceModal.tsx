@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Smartphone, X, QrCode, ExternalLink, Check, Copy } from 'lucide-react';
+import { Smartphone, X, QrCode, Check, Copy, Info } from 'lucide-react';
+import QRCode from 'qrcode';
 
 interface MobileExperienceModalProps {
   isOpen: boolean;
@@ -13,12 +14,32 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
   targetUrl = 'https://quillaspot-prototype.vercel.app/',
 }) => {
   const [copied, setCopied] = useState(false);
+  const [qrSvg, setQrSvg] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Generador de QR dinámico y nítido (200x200 con margen óptico)
-  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-    targetUrl
-  )}&bgcolor=FFFFFF&color=0F172A&margin=1`;
+  // Normalización estricta de URL (sin espacios)
+  const cleanUrl = targetUrl.trim();
+
+  useEffect(() => {
+    // Generación con estándar estricto
+    QRCode.toString(
+      cleanUrl,
+      {
+        type: 'svg',
+        errorCorrectionLevel: 'M',
+        margin: 4,
+        color: {
+          dark: '#000000',
+          light: '#ffffff',
+        },
+      },
+      (err, svgString) => {
+        if (!err && svgString) {
+          setQrSvg(svgString);
+        }
+      }
+    );
+  }, [cleanUrl]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -36,7 +57,7 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(targetUrl);
+      await navigator.clipboard.writeText(cleanUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2200);
     } catch {
@@ -55,7 +76,7 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
         aria-hidden="true"
       />
 
-      {/* Modal Card con scroll interno si la pantalla es reducida y márgenes libres garantizados */}
+      {/* Modal Card */}
       <div
         ref={modalRef}
         role="dialog"
@@ -82,32 +103,36 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
           ¡Mejor experiencia en tu celular!
         </h3>
 
-        {/* Mensaje descriptivo con contraste y tamaño equilibrado */}
+        {/* Mensaje descriptivo */}
         <p className="text-xs text-slate-600 mt-1.5 max-w-[280px] leading-relaxed font-normal">
           QuillaSpot está pensada para llevar en el bolsillo: abre el GPS de Google Maps y chatea con los lugares con 1 toque.
         </p>
 
-        {/* Contenedor del Código QR enmarcado con dimensiones seguras */}
-        <div className="mt-3.5 p-3 bg-slate-50 rounded-2xl border border-slate-200/70 shadow-inner flex flex-col items-center w-full max-w-[240px]">
-          <div className="bg-white p-2 rounded-xl shadow-xs border border-slate-100 w-36 h-36 flex items-center justify-center">
-            <img
-              src={qrApiUrl}
-              alt="Código QR de QuillaSpot"
-              className="w-full h-full object-contain block"
-              loading="eager"
-            />
+        {/* Contenedor del Código QR vectorizado */}
+        <div className="mt-3.5 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 shadow-inner flex flex-col items-center w-full max-w-[240px]">
+          <div className="bg-white p-2 rounded-xl shadow-xs border border-slate-200 w-44 h-44 flex items-center justify-center overflow-hidden">
+            {qrSvg ? (
+              <div
+                className="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:block"
+                dangerouslySetInnerHTML={{ __html: qrSvg }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                Generando QR...
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 mt-2">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 mt-2.5">
             <QrCode className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span>Escanea con la cámara</span>
+            <span>Escanea con la cámara o Google Lens</span>
           </div>
         </div>
 
-        {/* Acciones de enlace alternativo */}
-        <div className="w-full mt-3.5 flex items-center gap-2">
+        {/* Botón de copiar enlace */}
+        <div className="w-full mt-3.5">
           <button
             onClick={handleCopyLink}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-all active:scale-95 cursor-pointer shadow-2xs"
+            className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-all active:scale-95 cursor-pointer shadow-2xs"
           >
             {copied ? (
               <>
@@ -117,23 +142,20 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
             ) : (
               <>
                 <Copy className="w-3.5 h-3.5 text-slate-600" />
-                <span>Copiar enlace</span>
+                <span>Copiar enlace al portapapeles</span>
               </>
             )}
           </button>
-
-          {/*
-          <a
-            href={targetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-all active:scale-95 cursor-pointer shadow-xs"
-            title="Abrir enlace en nueva pestaña"
-          >
-            <ExternalLink className="w-4 h-4" />
-          </a>
-          */}
         </div>
+
+        {/* Tip para Xiaomi / POCO / MIUI 
+        <div className="w-full mt-3 p-2.5 bg-amber-50/70 border border-amber-200/60 rounded-xl text-left flex items-start gap-2">
+          <Info className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-amber-900/90 leading-tight">
+            <strong>¿Tienes Xiaomi / POCO?</strong> Si la app de cámara solo muestra "Copiar", usa el icono de <strong>Google Lens</strong> en la cámara o toca la app <strong>Escáner</strong> de tu teléfono para ir directo a Chrome.
+          </p>
+        </div>
+        */}
       </div>
     </div>
   );
