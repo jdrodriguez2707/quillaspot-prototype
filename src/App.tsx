@@ -6,6 +6,7 @@ import { HeroBanner } from './components/layout/HeroBanner';
 import { CategoryFilter } from './components/filters/CategoryFilter';
 import { SearchBar } from './components/filters/SearchBar';
 import { PlaceList } from './components/places/PlaceList';
+import { PlaceDetailModal } from './components/detail/PlaceDetailModal';
 import { Footer } from './components/layout/Footer';
 import { normalizeText } from './utils/text';
 
@@ -20,6 +21,9 @@ export default function App() {
   const [places] = useState<Place[]>(rawPlaces as Place[]);
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory>('Todos');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  
+  // Estado para la vista en detalle (Fase 4)
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   // Conteo dinámico de planes por categoría
   const categoryCounts = useMemo(() => {
@@ -81,7 +85,11 @@ export default function App() {
   };
 
   const handleSelectPlace = (place: Place) => {
-    console.log('Lugar seleccionado para detalle:', place.name);
+    setSelectedPlace(place);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedPlace(null);
   };
 
   const hasActiveFilters = selectedCategory !== 'Todos' || searchTerm.trim() !== '';
@@ -118,6 +126,12 @@ export default function App() {
           hasActiveFilters={hasActiveFilters}
         />
       </main>
+
+      {/* Modal / Sheet de Vista en Detalle y Botones de Conversión (Fase 4) */}
+      <PlaceDetailModal
+        place={selectedPlace}
+        onClose={handleCloseModal}
+      />
 
       {/* Footer */}
       <Footer />

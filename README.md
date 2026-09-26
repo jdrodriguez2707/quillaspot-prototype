@@ -26,7 +26,7 @@ Su propuesta de valor es **cero login** (fricción nula para el usuario) y una c
 
 ---
 
-## 📁 Estructura de Carpetas Propuesta
+## 📁 Estructura de Carpetas
 
 ```text
 /
@@ -35,18 +35,20 @@ Su propuesta de valor es **cero login** (fricción nula para el usuario) y una c
 ├── package.json            # Scripts y dependencias (React 19, Vite, Tailwind CSS v4, Lucide)
 ├── README.md               # Documentación y guía del proyecto
 ├── src/
-│   ├── components/         # Componentes modulares y reutilizables
-│   │   ├── layout/         # Barra superior (Header), barra de navegación o pie
-│   │   ├── places/         # Tarjetas de lugar (PlaceCard), lista/grid de catálogo
-│   │   ├── filters/        # Barra de categorías y filtros rápidos
-│   │   └── detail/         # Modal / Drawer de vista en detalle y CTAs
+│   ├── components/
+│   │   ├── layout/         # Header (con clima nativo en Barranquilla), HeroBanner, Footer
+│   │   ├── places/         # PlaceCard (ordenamiento de destacados, badges de precio), PlaceList
+│   │   ├── filters/        # SearchBar (búsqueda insensible a tildes), CategoryFilter
+│   │   └── detail/         # PlaceDetailModal (Sheet modal con CTAs a Maps y WhatsApp)
 │   ├── data/
-│   │   └── places.json     # Única fuente de verdad (dataset de lugares en Barranquilla/Atlántico)
+│   │   └── places.json     # Única fuente de verdad (dataset de planes del Atlántico)
 │   ├── types/
-│   │   └── place.ts        # Definición de tipos TypeScript para el modelo de Lugar
-│   ├── App.tsx             # Componente raíz orquestador de vistas y estado ligero
-│   ├── index.css           # Configuración de Tailwind CSS y estilos base
-│   └── main.tsx            # Inicialización de React en el DOM
+│   │   └── place.ts        # Definición tipada TypeScript
+│   ├── utils/
+│   │   └── text.ts         # Normalización de textos y tildes para búsqueda en español
+│   ├── App.tsx             # Orquestador del estado y vistas (KISS)
+│   ├── index.css           # Configuración de Tailwind CSS
+│   └── main.tsx            # Inicialización de React
 ```
 
 ---
@@ -54,23 +56,24 @@ Su propuesta de valor es **cero login** (fricción nula para el usuario) y una c
 ## 🛠️ Decisiones Técnicas y Arquitectura (KISS)
 
 1. **Mobile-First por diseño**:
-   - Todo el sistema de maquetación prioriza anchos de pantalla móviles (`max-w-md mx-auto` o contenedor centrado con sensación nativa tipo app móvil en escritorio y 100% fluidez en pantallas táctiles).
+   - Todo el sistema de maquetación prioriza anchos de pantalla móviles (`max-w-md mx-auto` con soporte táctil, gestos activos y scroll suave).
 2. **Cero Over-Engineering**:
    - Estado manejado mediante hooks nativos de React (`useState`, `useMemo`).
    - Sin librerías pesadas de estado ni dependencias innecesarias.
 3. **Fuente de Datos Estática (`places.json`)**:
    - Cero latencia de arranque, sin configuración de base de datos en esta fase inicial.
-   - Fácilmente migrable a una API o base de datos en fases posteriores.
-4. **CTAs de Alta Conversión**:
-   - Redirección nativa con deeplinks a **WhatsApp Web / App** (`https://wa.me/{numero}?text={mensaje}`) y **Google Maps** (`mapsUrl`).
-5. **Rendimiento y Despliegue en Vercel**:
-   - Bundling ultrarrápido con **Vite**, estilos utilitarios atómicos sin CSS superfluo con **Tailwind CSS**.
+4. **CTAs Vitales de Alta Conversión**:
+   - Redirección nativa con deeplinks a **WhatsApp** (`https://wa.me/{numero}?text={mensaje}`) y **Google Maps** (`mapsUrl`) en pestañas nuevas seguras (`target="_blank" rel="noopener noreferrer"`).
+5. **Clima Nativo sin Permisos**:
+   - Coordenadas geográficas fijas de Barranquilla vía API abierta de Open-Meteo, sin solicitar permisos invasivos de ubicación.
+6. **Búsqueda Resiliente en Español**:
+   - Normalización de tildes/acentos en nombres, categorías, municipios y descripciones.
 
 ---
 
 ## 🗺️ Fases de Desarrollo Planificadas
 
-- [ ] **Fase 1**: Configuración inicial, layout base (Header y contenedor Mobile-First) y carga tipada del archivo `places.json`.
-- [ ] **Fase 2**: Componente de Tarjeta (`PlaceCard`) y Catálogo con lógica de ordenamiento (`isFeatured: true` de primero con badge destacado).
-- [ ] **Fase 3**: Sistema de filtros interactivos por categoría (Gastronomía, Ecoturismo, Cultura y Ocio, etc.).
-- [ ] **Fase 4**: Vista de detalle (modal/drawer fluido) y CTAs de redirección rápida a Maps y WhatsApp.
+- [x] **Fase 1**: Configuración inicial, layout base (Header mobile-first y contenedor principal) y carga del JSON.
+- [x] **Fase 2**: Componente de Tarjeta (`PlaceCard`) y Catálogo con lógica de ordenamiento (`isFeatured: true` de primero con badge destacado) y niveles de precios.
+- [x] **Fase 3**: Sistema de filtros interactivos por categoría y búsqueda insensible a acentos.
+- [x] **Fase 4**: Vista de detalle (modal/sheet fluido) y CTAs de redirección rápida a Maps y WhatsApp.

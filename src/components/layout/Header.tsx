@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Sun, CloudSun, CloudRain, MapPin, Compass } from 'lucide-react';
+import { Sun, CloudSun, CloudRain, MapPin } from 'lucide-react';
 
 interface WeatherData {
   temperature: number;
@@ -62,7 +62,7 @@ export const Header: React.FC = () => {
         {/* Brand Logo & Name */}
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center text-white shadow-sm shadow-orange-300">
-            <Compass className="w-5 h-5" />
+            <Sun className="w-5 h-5 fill-yellow-200 text-yellow-100" />
           </div>
           <div>
             <div className="flex items-center gap-1.5 leading-none">
