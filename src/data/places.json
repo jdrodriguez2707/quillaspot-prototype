@@ -142,5 +142,23 @@
     "whatsapp": "https://www.instagram.com/icecreamhouse2022/",
     "whatsappMessage": "¡Hola Ice Cream House! Los vi en QuillaSpot. ¿Me podrían compartir la carta de helados, postres y los sabores disponibles hoy?",
     "isFeatured": true
+  },
+  {
+    "id": "los-chamos-food",
+    "name": "Los Chamos Foods",
+    "category": "Gastronomía",
+    "municipality": "Barranquilla",
+    "priceLevel": "Económico",
+    "priceDetail": "COP 20.000 – 40.000 por persona",
+    "rating": 4.8,
+    "shortDescription": "¡El paraíso de las comidas venezolanas! Los mejores perros calientes y arepas gigantes.",
+    "fullDescription": "El auténtico sabor de la comida callejera venezolana en Barranquilla. Déjate tentar por sus legendarios perros calientes cargados con salsas especiales, arepas cabimeras y rellenas a reventar, pepitos monumentales, hamburguesas y patacones con full carne mechada o pollo. Un plan nocturno obligado en La Unión para comer abundante, sabroso y con excelente sazón.",
+    "imageUrl": "/assets/places/los-chamos-food.webp",
+    "tags": ["Comida Venezolana", "Perros Calientes", "Arepas Gigantes", "Pepitos", "Patacones", "Nocturno"],
+    "address": "Calle 35 #17-125, La Union, Barranquilla, Atlántico",
+    "mapsUrl": "https://maps.app.goo.gl/NUxzaKcWtawqyc2X8",
+    "whatsapp": "https://api.whatsapp.com/send?phone=573017754198",
+    "whatsappMessage": "¡Hola Los Chamos Foods! Los vi en QuillaSpot. ¿Me podrían enviar el menú de hoy y la información para domicilios o pedidos?",
+    "isFeatured": true
   }
 ]
