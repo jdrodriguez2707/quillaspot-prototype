@@ -178,5 +178,23 @@
     "whatsapp": "https://api.whatsapp.com/send?phone=573246126248",
     "whatsappMessage": "¡Hola Las Rocas! Los vi en QuillaSpot. ¿Me podrían compartir el menú del día, disponibilidad de mesas o información de domicilios?",
     "isFeatured": true
+  },
+  {
+    "id": "el-patio-de-la-21",
+    "name": "El Patio De La 21",
+    "category": "Gastronomía",
+    "municipality": "Barranquilla",
+    "priceLevel": "Moderado",
+    "priceDetail": "COP 35.000 – 65.000 por persona",
+    "rating": 4.5,
+    "shortDescription": "Gastronomía caribeña, cazuelas flambeadas, carnes a la parrilla y ambiente de patio tradicional.",
+    "fullDescription": "Un auténtico rincón barranquillero en el tradicional barrio San José. Diseñado como el clásico patio costeño con mecedoras, plantas y temática carnavalera, El Patio De La 21 deleita con cazuelas de mariscos en llama en vivo, mojarras fritas, posta cartagenera, parrilladas y cócteles tropicales, acompañados de música en vivo y el mejor ambiente para celebrar en familia o entre amigos.",
+    "imageUrl": "/assets/places/patio-de-la-21.webp",
+    "tags": ["Comida Caribeña", "Mariscos", "Parrilla", "Música en Vivo", "Patio Costeño", "Familiar", "Cócteles"],
+    "address": "Cra. 21 #39-6, San José, Barranquilla, Atlántico",
+    "mapsUrl": "https://maps.app.goo.gl/bKDVYaLB21ZjKecn7",
+    "whatsapp": "https://api.whatsapp.com/send?phone=573006821618",
+    "whatsappMessage": "¡Hola El Patio De La 21! Los vi en QuillaSpot. ¿Me podrían compartir el menú, la programación del fin de semana o disponibilidad de reservas?",
+    "isFeatured": true
   }
 ]
