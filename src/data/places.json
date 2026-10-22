@@ -124,5 +124,23 @@
     "whatsapp": "https://api.whatsapp.com/send?phone=573012045537",
     "whatsappMessage": "¡Hola The House Fast Food! Los vi en QuillaSpot. ¿Me podrían compartir el menú de hoy y los tiempos de atención/domicilio?",
     "isFeatured": true
+  },
+  {
+    "id": "ice-cream-house",
+    "name": "Ice Cream House",
+    "category": "Gastronomía",
+    "municipality": "Barranquilla",
+    "priceLevel": "Económico",
+    "priceDetail": "COP 8.000 – 25.000 por persona",
+    "rating": 5.0,
+    "shortDescription": "El sabor que alegra tu día: helados, waffles, malteadas, fresas con crema y cervezas",
+    "fullDescription": "El punto dulce perfecto para tardear o cerrar la noche en Barranquilla. Disfruta de helados artesanales en cono o copa, crujientes waffles recién horneados con toppings, malteadas espesas, copas gigantes de fresas con crema y cervezas bien frías en un ambiente acogedor para compartir con tu pareja, amigos o en familia.",
+    "imageUrl": "/assets/places/ice-cream-house-restaurant.webp",
+    "tags": ["Helados", "Waffles", "Malteadas", "Postres", "Fresas con Crema", "Tardeo", "Familiar"],
+    "address": "Cra 21 #28 Esquina, Los Trupillos, Barranquilla, Atlántico",
+    "mapsUrl": "https://maps.app.goo.gl/WpNUNLDQXw8jydML8",
+    "whatsapp": "https://www.instagram.com/icecreamhouse2022/",
+    "whatsappMessage": "¡Hola Ice Cream House! Los vi en QuillaSpot. ¿Me podrían compartir la carta de helados, postres y los sabores disponibles hoy?",
+    "isFeatured": true
   }
 ]
