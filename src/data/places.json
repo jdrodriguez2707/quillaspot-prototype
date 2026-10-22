@@ -160,5 +160,23 @@
     "whatsapp": "https://api.whatsapp.com/send?phone=573017754198",
     "whatsappMessage": "¡Hola Los Chamos Foods! Los vi en QuillaSpot. ¿Me podrían enviar el menú de hoy y la información para domicilios o pedidos?",
     "isFeatured": true
+  },
+  {
+    "id": "las-rocas",
+    "name": "Las Rocas Restaurante",
+    "category": "Gastronomía",
+    "municipality": "Barranquilla",
+    "priceLevel": "Moderado",
+    "priceDetail": "COP 40.000 – 60.000 por persona",
+    "rating": 4.4,
+    "shortDescription": "El verdadero corazón y sabor típico colombiano: sazón de mamá, bandeja paisa y desayunos costeños.",
+    "fullDescription": "Ganador del premio al Mejor Sabor Típico de la Costa (2025 y 2026), Las Rocas es el templo de la comida tradicional colombiana elaborada con recetas caseras y sazón de matronas cocineras. Famoso por su monumental bandeja paisa, desayunos típicos desde temprano, sopas caseras y carnes asadas, todo en un ambiente acogedor e instagrameable con paredes decoradas de dichos y frases de la cultura caribe.",
+    "imageUrl": "/assets/places/restaurante-las-rocas.webp",
+    "tags": ["Comida Típica", "Bandeja Paisa", "Desayunos Costeños", "Sazón de Hogar", "Familiar", "Instagrameable"],
+    "address": "Calle 35 #13C-08, La Union, Barranquilla, Atlántico",
+    "mapsUrl": "https://maps.app.goo.gl/ne3b7cWswzE5edbD8",
+    "whatsapp": "https://api.whatsapp.com/send?phone=573246126248",
+    "whatsappMessage": "¡Hola Las Rocas! Los vi en QuillaSpot. ¿Me podrían compartir el menú del día, disponibilidad de mesas o información de domicilios?",
+    "isFeatured": true
   }
 ]
