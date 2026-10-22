@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import rawPlaces from './data/places.json';
 import { Place, PlaceCategory } from './types/place';
@@ -83,6 +83,29 @@ export default function App() {
     });
   }, [places, selectedCategory, searchTerm]);
 
+  // Detección de deep-link ?place=ID en la URL al cargar la página o al navegar con el historial (popstate)
+  useEffect(() => {
+    const syncPlaceFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      const placeId = params.get('place');
+      if (placeId) {
+        const found = places.find((p) => p.id === placeId);
+        if (found) {
+          setSelectedPlace(found);
+          return;
+        }
+      }
+      // Si no hay parámetro place en URL, nos aseguramos de no forzar un estado desincronizado
+    };
+
+    // Al montar la app
+    syncPlaceFromUrl();
+
+    // Cuando el usuario presiona botón "Atrás" o "Adelante" del navegador
+    window.addEventListener('popstate', syncPlaceFromUrl);
+    return () => window.removeEventListener('popstate', syncPlaceFromUrl);
+  }, [places]);
+
   const handleResetFilters = () => {
     setSelectedCategory('Todos');
     setSearchTerm('');
@@ -90,10 +113,20 @@ export default function App() {
 
   const handleSelectPlace = (place: Place) => {
     setSelectedPlace(place);
+    // Actualizamos la URL sin recargar la página para que refleje el lugar abierto
+    const url = new URL(window.location.href);
+    url.searchParams.set('place', place.id);
+    window.history.pushState({ placeId: place.id }, '', url.toString());
   };
 
   const handleCloseModal = () => {
     setSelectedPlace(null);
+    // Limpiamos el parámetro de la URL al cerrar el modal
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('place')) {
+      url.searchParams.delete('place');
+      window.history.pushState({}, '', url.toString());
+    }
   };
 
   const hasActiveFilters = selectedCategory !== 'Todos' || searchTerm.trim() !== '';

@@ -90,10 +90,15 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
     : place.imageUrl;
 
   const handleShare = async () => {
+    // Generamos URL directa con parámetro de búsqueda ?place=ID para que al abrir el enlace cargue directamente la ficha
+    const urlObj = new URL(window.location.href);
+    urlObj.searchParams.set('place', place.id);
+    const shareUrl = urlObj.toString();
+
     const shareData = {
       title: `${place.name} en QuillaSpot`,
       text: `¡Mira este plan en ${place.municipality}! ${place.shortDescription}`,
-      url: window.location.href,
+      url: shareUrl,
     };
 
     if (navigator.share) {
@@ -104,7 +109,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
       }
     } else {
       try {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(shareUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       } catch {

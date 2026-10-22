@@ -106,5 +106,23 @@
     "whatsapp": "https://www.instagram.com/alcaldiadepuerto/",
     "whatsappMessage": "¡Hola! Vi el plan en QuillaSpot. ¿Qué actividades culturales o puestos gastronómicos tienen abiertos hoy en la plaza?",
     "isFeatured": false
+  },
+  {
+    "id": "the-house-fast-food",
+    "name": "The House Fast Food",
+    "category": "Gastronomía",
+    "municipality": "Barranquilla",
+    "priceLevel": "Económico",
+    "priceDetail": "COP 18.000 – 38.000 por persona",
+    "rating": 4.5,
+    "shortDescription": "El antojo de la noche se resuelve aquí: hamburguesas, desgranados, picadas y comida rápida.",
+    "fullDescription": "El antojo de la noche se resuelve aquí y rápido. Vengas con quien vengas, aquí todos comen bien: hamburguesas artesanales, salchipapas cargadas, suizos, mazorcadas y desgranados en un ambiente fresco, relajado y al aire libre con terraza para disfrutar con amigos y familia.",
+    "imageUrl": "/assets/places/the-house-fast-food.png",
+    "tags": ["Comidas Rápidas", "Hamburguesas", "Desgranados", "Terraza", "Nocturno"],
+    "address": "Cra 21 #28 Esquina, Los Trupillos, Barranquilla, Atlántico",
+    "mapsUrl": "https://maps.app.goo.gl/pGWmhnZGUgS4Foh97",
+    "whatsapp": "https://api.whatsapp.com/send?phone=573012045537",
+    "whatsappMessage": "¡Hola The House Fast Food! Los vi en QuillaSpot. ¿Me podrían compartir el menú de hoy y los tiempos de atención/domicilio?",
+    "isFeatured": true
   }
 ]
