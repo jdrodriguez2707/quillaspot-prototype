@@ -196,5 +196,23 @@
     "whatsapp": "https://api.whatsapp.com/send?phone=573006821618",
     "whatsappMessage": "¡Hola El Patio De La 21! Los vi en QuillaSpot. ¿Me podrían compartir el menú, la programación del fin de semana o disponibilidad de reservas?",
     "isFeatured": true
+  },
+  {
+    "id": "crunchy-ricuras",
+    "name": "Crunchy Ricuras",
+    "category": "Gastronomía",
+    "municipality": "Barranquilla",
+    "priceLevel": "Económico",
+    "priceDetail": "COP 19.900 – 35.000 por persona",
+    "rating": 5.0,
+    "shortDescription": "¡El crunchy que Barranquilla necesitaba! Pollo broaster estilo americano, horneado, Crunchy Burger y bites.",
+    "fullDescription": "Pollo broaster extra crujiente por fuera y jugoso por dentro, preparado al auténtico estilo americano, además de delicioso pollo al horno marinado con papa cocida, bollo y maduro. Descubre sus famosos combos individuales desde $19.900, la irresistible Crunchy Burger con filete apanado y queso mozzarella, y los Crunchy Bites con queso gratinado y maíz tierno en Miramar Plaza.",
+    "imageUrl": "/assets/places/crunchy-ricuras.jpg",
+    "tags": ["Pollo Broaster", "Pollo al Horno", "Hamburguesas", "Crunchy Bites", "Combos", "Centro Comercial"],
+    "address": "Miramar plaza Centro comercial, Tv. 44 #104-530, Tercer Piso, Local 306, Barranquilla, Atlántico",
+    "mapsUrl": "https://maps.app.goo.gl/TPikCqVX9AnazXAT7",
+    "whatsapp": "https://api.whatsapp.com/send?phone=573053433362",
+    "whatsappMessage": "¡Hola Crunchy Ricuras! Los vi en QuillaSpot. ¿Me podrían confirmar el menú del día y los tiempos de entrega para domicilio?",
+    "isFeatured": true
   }
 ]
