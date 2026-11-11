@@ -1,7 +1,8 @@
-# QuillaSpot - Reglas Técnicas y Arquitectura
+# QuillaSpot — Arquitectura y Reglas Técnicas
 
-- **Stack Base:** React (Next.js o Vite), Tailwind CSS para estilos.
-- **Base de Datos MVP:** Por ahora, los datos siguen viviendo en un archivo estructurado `places.json`. No instalar bases de datos complejas aún.
-- **Diseño (Apple HIG):** La UI debe sentirse como una app nativa de iOS. Uso de `backdrop-blur` (vidrio esmerilado), bordes muy redondeados (`rounded-2xl`, `rounded-3xl`), fondo gris (`bg-[#F2F2F7]`).
-- **Físicas y Gestos:** Usar `framer-motion` para animaciones con resortes (springs) en lugar de duraciones fijas. La vista de detalle debe ser un "Bottom Sheet" (modal deslizable desde abajo).
-- **Regla de Oro (KISS):** Cero over-engineering. No usar Redux, no instalar librerías pesadas si Tailwind o React nativo lo pueden resolver.
+- **Stack:** React 19 + TypeScript, Vite 8, Tailwind CSS v4 (`@tailwindcss/vite`), Framer Motion v13, Lucide React.
+- **Fuente de Datos:** `src/data/places.json` (Dataset estático local). Modificarlo respetando el tipo `Place`.
+- **Físicas y Gestos (Apple HIG):** Usar siempre los tokens de `src/utils/physics.ts` (`iosSpringDefault`, `iosSpringMomentum`, `iosSpringSnappy`).
+- **Direct Manipulation:** Respetar la inercia vertical del Bottom Sheet (`velocity.y > 250` o `offset.y > 70` para descartar).
+- **Rendimiento Móvil:** Cero reflow (`overflow: hidden` + `scrollbar-gutter: stable`), aceleración GPU con `transform-gpu`.
+- **Principio Rector:** KISS (Keep It Simple, Stupid). No agregar dependencias pesadas si React, Tailwind y TypeScript lo resuelven.

@@ -1,10 +1,11 @@
-# QuillaSpot - Contexto de Producto
+# QuillaSpot — Visión de Producto
 
-- **Visión:** Progressive Web App (PWA) para encontrar planes turísticos, culturales y gastronómicos en el Atlántico (Colombia) en menos de 2 segundos.
-- **Filosofía:** "Cero Login". El usuario final no se registra, no deja correos ni contraseñas. Acceso inmediato.
-- **Modelo de Negocio (B2B):** Los usuarios navegan gratis. Los comercios locales pagan una suscripción de $50.000 COP/mes para aparecer destacados ("isFeatured: true").
-- **Conversión (O2O):** El éxito de la app se mide en los clics que los usuarios hacen en los botones "Cómo llegar" (Google Maps) y "Contactar por WhatsApp".
-- **Nuevas funcionalidades del MVP:** 
-  1. Filtros por "Mood" (Ocasión: Pareja, Amigos, Barato, etc.).
-  2. "Armar Parche" (Seleccionar 2-3 lugares y compartir el itinerario por WhatsApp).
-  3. "QuillaBot" (Asistente de IA ligero para recomendar planes).
+- **Propósito:** PWA de descubrimiento turístico y gastronómico en Barranquilla y Atlántico. Decisión de planes en < 2 segundos.
+- **Filosofía:** "Cero Login". Acceso instantáneo sin contraseñas ni registros.
+- **Modelo de Negocio (B2B):** Gratuito para usuarios. Comercios pagan $50.000 COP/mes por posicionamiento destacado (`isFeatured: true`).
+- **Conversión O2O:** Foco en clics directos a Google Maps (`mapsUrl`) y WhatsApp/Instagram (`whatsappMessage`).
+- **Estado Actual:** 11 comercios curados, búsqueda NFD resiliente, Bottom Sheet fluido y deep linking con URL.
+- **Próximas Funcionalidades (Roadmap MVP):**
+  1. Filtros por "Mood" (Ocasión: En Pareja, Con Amigos, En Familia, Barato, Al Aire Libre).
+  2. "Armar Parche" (Selección de 2-3 lugares y compartir itinerario por WhatsApp).
+  3. "QuillaBot" (Asistente conversacional ligero con Gemini API).
