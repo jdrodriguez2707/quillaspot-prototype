@@ -73,8 +73,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQrModal }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         {/* Brand Logo & iOS Style Large Title */}
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 flex items-center justify-center text-white shadow-sm shadow-orange-500/20 active:scale-95 transition-transform duration-100 ease-out cursor-pointer">
-            <Sun className="w-5 h-5 fill-yellow-100 text-yellow-50" />
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white border border-black/[0.06] flex items-center justify-center shadow-xs overflow-hidden p-0.5 active:scale-95 transition-transform duration-100 ease-out cursor-pointer shrink-0">
+            <img
+              src="/assets/logo-quillaspot.png"
+              alt="Logo QuillaSpot"
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
             <div className="flex items-baseline gap-1.5 leading-tight">
