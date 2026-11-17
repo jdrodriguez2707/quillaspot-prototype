@@ -12,7 +12,9 @@ import {
   Wallet, 
   Share2, 
   Check,
-  Plus
+  Plus,
+  Route,
+  ChevronRight
 } from 'lucide-react';
 import { Place } from '../../types/place';
 import { iosSpringMomentum } from '../../utils/physics';
@@ -20,7 +22,9 @@ import { iosSpringMomentum } from '../../utils/physics';
 interface PlaceDetailModalProps {
   place: Place | null;
   isInPlan?: boolean;
+  planCount?: number;
   onTogglePlan?: (place: Place) => void;
+  onOpenPlan?: () => void;
   onClose: () => void;
 }
 
@@ -45,7 +49,9 @@ const getPriceBadgeStyle = (level: string) => {
 export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
   place,
   isInPlan = false,
+  planCount = 0,
   onTogglePlan,
+  onOpenPlan,
   onClose,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -58,8 +64,10 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
       document.body.classList.add('modal-open');
     }
     return () => {
-      document.body.style.overflow = '';
-      document.body.classList.remove('modal-open');
+      if (!document.querySelector('[role="dialog"]')) {
+        document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
+      }
     };
   }, [place]);
 
@@ -140,7 +148,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
   const isFreeEntry = place.priceLevel.toLowerCase().includes('libre');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center pt-[72px] sm:pt-20 p-0 sm:p-4 md:p-6">
       {/* Backdrop Scrim: sin backdrop-blur pesado para 60-120fps puros en Android/iOS */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -166,7 +174,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
         dragConstraints={{ top: 0 }}
         dragElastic={{ top: 0.05, bottom: 0.6 }}
         onDragEnd={handleDragEnd}
-        className="relative z-10 w-full max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl max-h-[92vh] sm:max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border-t sm:border border-white/50 touch-pan-y will-change-transform transform-gpu"
+        className="relative z-10 w-full max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl max-h-[calc(100dvh-4.5rem)] sm:max-h-[calc(100dvh-6rem)] flex flex-col overflow-hidden shadow-2xl border-t sm:border border-white/50 touch-pan-y will-change-transform transform-gpu"
       >
         {/* Cabecera / Imagen con esquinas redondeadas continuas y grab handle integrado */}
         <div className="relative aspect-16/10 sm:aspect-16/9 w-full shrink-0 bg-slate-950 rounded-t-[32px] sm:rounded-t-3xl overflow-hidden select-none">
@@ -331,28 +339,49 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
         </div>
 
         {/* Botones de Acción Vitales (CTAs directos con respuesta instantánea pointer-down) */}
-        <div className="p-4 sm:p-5 bg-white/90 backdrop-blur-md border-t border-black/[0.06] shrink-0 grid grid-cols-2 gap-3">
-          {/* Botón Secundario: Cómo llegar (Google Maps) */}
-          <a
-            href={place.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs sm:text-sm font-semibold transition-transform duration-100 ease-out active:scale-95 text-center shadow-2xs cursor-pointer"
-          >
-            <Navigation className="w-4 h-4 text-slate-700" />
-            <span>Cómo llegar</span>
-          </a>
+        <div className="p-4 sm:p-5 bg-white/90 backdrop-blur-md border-t border-black/[0.06] shrink-0 space-y-2.5">
+          {planCount > 0 && onOpenPlan && (
+            <button
+              type="button"
+              onClick={onOpenPlan}
+              className="w-full flex items-center justify-between pl-3.5 pr-2 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold shadow-sm transition-transform duration-100 ease-out active:scale-[0.98] cursor-pointer"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Route className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="tabular-nums">
+                  Tu Plan ({planCount} {planCount === 1 ? 'lugar' : 'lugares'})
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 bg-amber-500 text-slate-950 font-bold text-xs px-3 py-1 rounded-full shrink-0">
+                <span>Ver Ruta</span>
+                <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+              </span>
+            </button>
+          )}
 
-          {/* Botón Primario: Contactar (Verde con respuesta instantánea) */}
-          <a
-            href={contactUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs sm:text-sm font-semibold transition-transform duration-100 ease-out shadow-sm shadow-[#25D366]/20 active:scale-95 text-center cursor-pointer"
-          >
-            <MessageCircle className="w-4 h-4 fill-white" />
-            <span>Contactar</span>
-          </a>
+          <div className="grid grid-cols-2 gap-3">
+            {/* Botón Secundario: Cómo llegar (Google Maps) */}
+            <a
+              href={place.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs sm:text-sm font-semibold transition-transform duration-100 ease-out active:scale-95 text-center shadow-2xs cursor-pointer"
+            >
+              <Navigation className="w-4 h-4 text-slate-700" />
+              <span>Cómo llegar</span>
+            </a>
+
+            {/* Botón Primario: Contactar (Verde con respuesta instantánea) */}
+            <a
+              href={contactUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs sm:text-sm font-semibold transition-transform duration-100 ease-out shadow-sm shadow-[#25D366]/20 active:scale-95 text-center cursor-pointer"
+            >
+              <MessageCircle className="w-4 h-4 fill-white" />
+              <span>Contactar</span>
+            </a>
+          </div>
         </div>
       </motion.div>
     </div>

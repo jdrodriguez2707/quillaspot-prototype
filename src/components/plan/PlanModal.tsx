@@ -100,7 +100,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
   if (plan.length === 0) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center pt-[72px] sm:pt-20 p-0 sm:p-4 md:p-6">
       {/* Backdrop Scrim */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -126,7 +126,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
         dragConstraints={{ top: 0 }}
         dragElastic={{ top: 0.05, bottom: 0.6 }}
         onDragEnd={handleDragEnd}
-        className="relative z-10 w-full max-w-md sm:max-w-lg bg-[#F2F2F7] rounded-t-[32px] sm:rounded-3xl max-h-[90vh] sm:max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border-t sm:border border-white/60 touch-pan-y will-change-transform transform-gpu"
+        className="relative z-10 w-full max-w-md sm:max-w-lg bg-[#F2F2F7] rounded-t-[32px] sm:rounded-3xl max-h-[calc(100dvh-4.5rem)] sm:max-h-[calc(100dvh-6rem)] flex flex-col overflow-hidden shadow-2xl border-t sm:border border-white/60 touch-pan-y will-change-transform transform-gpu"
       >
         {/* Cabecera fija del modal */}
         <div className="bg-white/85 backdrop-blur-xl border-b border-black/[0.06] px-5 pt-3 pb-4 shrink-0">
@@ -164,7 +164,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                 type="button"
                 onClick={onClose}
                 className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-transform duration-100 ease-out active:scale-95 cursor-pointer"
-                aria-label="Cerrar itinerario"
+                aria-label="Cerrar ruta"
               >
                 <X className="w-4 h-4" />
               </button>

@@ -267,6 +267,16 @@ export default function App() {
     setIsPlanModalOpen(false);
   }, []);
 
+  const handleOpenPlanFromDetail = useCallback(() => {
+    setSelectedPlace(null);
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('place')) {
+      url.searchParams.delete('place');
+      window.history.pushState({}, '', url.toString());
+    }
+    setIsPlanModalOpen(true);
+  }, []);
+
   const hasActiveFilters =
     selectedCategory !== 'Todos' ||
     selectedMood !== 'Todos los planes' ||
@@ -274,13 +284,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F2F2F7] text-slate-900 flex flex-col font-sans antialiased selection:bg-amber-200">
-      {/* Header estilo iOS Navigation Bar translúcido */}
+      {/* Header fijo estilo iOS Navigation Bar translúcido, siempre visible */}
       <Header onOpenQrModal={() => setIsQrModalOpen(true)} />
+      <div className="h-16 sm:h-[68px] shrink-0" aria-hidden="true" />
 
       {/* Toast flotante estilo iOS cuando se alcanza el límite de 4 lugares */}
       <AnimatePresence>
         {planToast && (
-          <div className="fixed top-16 sm:top-20 inset-x-0 z-60 flex justify-center px-4 pointer-events-none">
+          <div className="fixed top-[74px] sm:top-[78px] inset-x-0 z-[70] flex justify-center px-4 pointer-events-none">
             <motion.div
               key={planToast.id}
               role="status"
@@ -373,13 +384,15 @@ export default function App() {
           <PlaceDetailModal
             place={selectedPlace}
             isInPlan={isPlaceInPlan(selectedPlace.id)}
+            planCount={plan.length}
             onTogglePlan={togglePlaceInPlan}
+            onOpenPlan={handleOpenPlanFromDetail}
             onClose={handleCloseModal}
           />
         )}
       </AnimatePresence>
 
-      {/* Modal de Itinerario y Compartir por WhatsApp */}
+      {/* Modal de Ruta y Compartir por WhatsApp */}
       <AnimatePresence>
         {isPlanModalOpen && plan.length > 0 && (
           <PlanModal

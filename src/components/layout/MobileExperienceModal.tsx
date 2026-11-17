@@ -68,7 +68,7 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[72px] sm:pt-20 p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop con oscurecimiento completo */}
       <div
         className="fixed inset-0 bg-black/65 backdrop-blur-sm transition-opacity"
@@ -82,7 +82,7 @@ export const MobileExperienceModal: React.FC<MobileExperienceModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="qr-modal-title"
-        className="relative z-10 w-full max-w-sm my-auto bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-100 flex flex-col items-center text-center max-h-[92vh] overflow-y-auto"
+        className="relative z-10 w-full max-w-sm my-auto bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-100 flex flex-col items-center text-center max-h-[calc(100dvh-5.5rem)] overflow-y-auto"
       >
         {/* Botón de Cierre Superior */}
         <button

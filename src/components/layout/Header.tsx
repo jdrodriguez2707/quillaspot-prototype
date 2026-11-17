@@ -69,8 +69,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQrModal }) => {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/70 backdrop-blur-xl saturate-180 border-b border-black/[0.06] border-t border-white/40 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+    <header className="fixed top-0 inset-x-0 z-[55] w-full bg-white/80 backdrop-blur-xl saturate-180 border-b border-black/[0.06] border-t border-white/40 shadow-xs">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-[68px] flex items-center justify-between">
         {/* Brand Logo & iOS Style Large Title */}
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white border border-black/[0.06] flex items-center justify-center shadow-xs overflow-hidden p-0.5 active:scale-95 transition-transform duration-100 ease-out cursor-pointer shrink-0">
