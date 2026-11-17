@@ -14,6 +14,7 @@ import {
 import {
   Place,
   QuillaBotErrorResponse,
+  QuillaBotHistoryItem,
   QuillaBotResponse,
 } from '../../types/place';
 import { iosSpringDefault, iosSpringMomentum } from '../../utils/physics';
@@ -61,6 +62,7 @@ export const QuillaBotModal: React.FC<QuillaBotModalProps> = ({
 }) => {
   const [query, setQuery] = useState<string>('');
   const [lastSubmittedQuery, setLastSubmittedQuery] = useState<string>('');
+  const [history, setHistory] = useState<QuillaBotHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [botResponse, setBotResponse] = useState<QuillaBotResponse | null>(null);
   const [errorState, setErrorState] = useState<QuillaBotErrorResponse | null>(null);
@@ -122,7 +124,8 @@ export const QuillaBotModal: React.FC<QuillaBotModalProps> = ({
     const trimmed = promptText.trim();
     if (!trimmed || isLoading) return;
 
-    setQuery(trimmed);
+    const historySnapshot = history.slice(-4);
+    setQuery('');
     setLastSubmittedQuery(trimmed);
     setIsLoading(true);
     setErrorState(null);
@@ -132,7 +135,10 @@ export const QuillaBotModal: React.FC<QuillaBotModalProps> = ({
       const res = await fetch('/api/quillabot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: trimmed }),
+        body: JSON.stringify({
+          query: trimmed,
+          history: historySnapshot,
+        }),
       });
 
       const data: unknown = await res.json().catch(() => null);
@@ -162,6 +168,11 @@ export const QuillaBotModal: React.FC<QuillaBotModalProps> = ({
       }
 
       setBotResponse(parsed);
+      setHistory((prev) => [
+        ...prev.slice(-2),
+        { role: 'user', content: trimmed },
+        { role: 'assistant', content: parsed.message },
+      ]);
     } catch {
       setErrorState({
         error:
@@ -181,6 +192,7 @@ export const QuillaBotModal: React.FC<QuillaBotModalProps> = ({
   const handleReset = () => {
     setQuery('');
     setLastSubmittedQuery('');
+    setHistory([]);
     setBotResponse(null);
     setErrorState(null);
     inputRef.current?.focus();
@@ -385,7 +397,7 @@ export const QuillaBotModal: React.FC<QuillaBotModalProps> = ({
           {!isLoading && !botResponse && !errorState && (
             <div className="bg-white rounded-2xl p-4 border border-black/[0.04] shadow-2xs">
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                ¡Qué más, llave! Cuéntame con quién sales, qué se te antoja o tu presupuesto y te recomiendo los mejores spots reales del catálogo en Barranquilla y el Atlántico.
+                ¡Hola! ¿Qué más? Cuéntame con quién sales, qué se te antoja o tu presupuesto y te ayudo a armar un buen plan en Barranquilla y el Atlántico.
               </p>
             </div>
           )}
@@ -438,7 +450,11 @@ export const QuillaBotModal: React.FC<QuillaBotModalProps> = ({
               <div className="bg-white rounded-2xl rounded-bl-md p-4 border border-black/[0.05] shadow-xs">
                 <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-600 mb-1.5">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Recomendación QuillaBot</span>
+                  <span>
+                    {recommendedPlaces.length > 0
+                      ? 'Recomendación QuillaBot'
+                      : 'QuillaBot'}
+                  </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
                   {botResponse.message}

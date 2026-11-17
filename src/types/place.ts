@@ -54,4 +54,10 @@ export interface QuillaBotErrorResponse {
   code?: QuillaBotErrorCode['code'];
 }
 
+export interface QuillaBotHistoryItem {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+
 

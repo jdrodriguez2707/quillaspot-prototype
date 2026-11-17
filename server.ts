@@ -4,7 +4,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer as createViteServer } from 'vite';
-import type { Place, QuillaBotResponse } from './src/types/place.ts';
+import type {
+  Place,
+  QuillaBotHistoryItem,
+  QuillaBotResponse,
+} from './src/types/place.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -122,17 +126,13 @@ const getAvailableGroqModels = async (apiKey: string): Promise<string[]> => {
 const callGroqModel = async (
   apiKey: string,
   model: string,
-  systemPrompt: string,
-  userPrompt: string,
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
   useJsonFormat: boolean
 ): Promise<{ status: number; ok: boolean; data: GroqChatCompletionResponse | null }> => {
   const body: Record<string, unknown> = {
     model,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-    temperature: 0.4,
+    messages,
+    temperature: 0.65,
     max_tokens: 1024,
   };
 
@@ -168,7 +168,8 @@ async function startServer() {
   app.use(express.json({ limit: '64kb' }));
 
   app.post('/api/quillabot', async (req: Request, res: Response) => {
-    const rawQuery = (req.body as { query?: unknown } | undefined)?.query;
+    const body = req.body as { query?: unknown; history?: unknown } | undefined;
+    const rawQuery = body?.query;
     const query = typeof rawQuery === 'string' ? rawQuery.trim() : '';
 
     if (!query || query.length > 300) {
@@ -178,6 +179,24 @@ async function startServer() {
       });
       return;
     }
+
+    const sanitizedHistory: QuillaBotHistoryItem[] = Array.isArray(body?.history)
+      ? body.history
+          .filter(
+            (item): item is QuillaBotHistoryItem =>
+              typeof item === 'object' &&
+              item !== null &&
+              ((item as { role?: unknown }).role === 'user' ||
+                (item as { role?: unknown }).role === 'assistant') &&
+              typeof (item as { content?: unknown }).content === 'string' &&
+              (item as { content: string }).content.trim().length > 0
+          )
+          .slice(-4)
+          .map((item) => ({
+            role: item.role,
+            content: item.content.trim().slice(0, 400),
+          }))
+      : [];
 
     const apiKey = process.env.GROQ_API_KEY?.trim();
     if (!apiKey) {
@@ -206,16 +225,38 @@ async function startServer() {
       }));
 
       const systemPrompt = [
-        'Eres QuillaBot, el consejero local de QuillaSpot en Barranquilla y el departamento del Atlántico, Colombia.',
-        'Tono obligatorio: amigable, fresco, caribeño y profesional, en español, con máximo 2 a 3 oraciones breves.',
-        'Regla estricta de catálogo: SOLO puedes recomendar lugares cuyos IDs existan literalmente en el catálogo oficial entregado.',
-        'No inventes lugares, direcciones ni precios fuera del catálogo.',
-        'Responde ÚNICAMENTE con un objeto JSON válido (sin texto adicional) con exactamente esta estructura:',
-        '{"message": "tu recomendación breve", "recommendedPlaceIds": ["id-exacto-1", "id-exacto-2"]}',
-        'Incluye entre 1 y 3 IDs exactos del catálogo en recommendedPlaceIds.',
-      ].join(' ');
+        'Eres QuillaBot, el asistente local de QuillaSpot para descubrir planes en Barranquilla y el departamento del Atlántico, Colombia.',
+        '',
+        'PERSONALIDAD Y TONO:',
+        '- Habla de forma natural, cercana, cálida y espontánea, con un toque sutil costeño/caribeño (como alguien amable de Barranquilla), pero SIN exagerar ni forzar jerga caricaturesca.',
+        '- Puedes usar de vez en cuando expresiones suaves y naturales como "¡Qué más!", "buen parche", "bacano", "por acá" o "brisa", pero máximo 1 por respuesta y solo si fluye bien.',
+        '- Sé concreto, claro y útil (máximo 2 a 3 oraciones).',
+        '',
+        'COMPORTAMIENTO ADAPTATIVO SEGÚN LA INTENCIÓN DEL USUARIO:',
+        '1. Si el usuario solo saluda, agradece o hace charla general (ej. "Hola", "Buenas", "¿Cómo estás?", "Gracias", "¿Qué puedes hacer?") SIN pedir todavía un plan o comida específica: responde con calidez y pregúntale de forma natural qué tiene ganas de hacer hoy (con quién sale, qué se le antoja o qué presupuesto maneja). En este caso DEBES devolver "recommendedPlaceIds": [] (arreglo vacío, SIN recomendar lugares todavía).',
+        '2. Si el usuario pregunta algo ambiguo o fuera de lugar: respóndele amablemente y oriéntalo a contarte qué tipo de plan busca en Barranquilla o el Atlántico, devolviendo "recommendedPlaceIds": [].',
+        '3. Si el usuario SÍ pide una recomendación (por ocasión, comida, presupuesto, lugar o mood, o continúa una conversación previa): recomienda entre 1 y 3 lugares del catálogo explicando brevemente por qué encajan con lo que busca, y devuelve sus IDs exactos en "recommendedPlaceIds".',
+        '',
+        'REGLA ESTRICTA DE CATÁLOGO:',
+        '- SOLO puedes mencionar y devolver lugares cuyo "id" exista literalmente en el catálogo oficial.',
+        '- Nunca inventes sitios, precios ni direcciones fuera de este catálogo.',
+        '',
+        'FORMATO OBLIGATORIO DE SALIDA (únicamente JSON válido):',
+        '{"message": "tu respuesta natural", "recommendedPlaceIds": ["id-1", "id-2"]}',
+        '',
+        'EJEMPLOS DE REFERENCIA:',
+        '- Usuario: "Hola" -> {"message": "¡Hola! ¿Qué más? Cuéntame qué tienes ganas de hacer hoy por Barranquilla o el Atlántico: ¿buscas algo rico para comer, un plan en pareja o parche con amigos?", "recommendedPlaceIds": []}',
+        '- Usuario: "Cita en pareja al atardecer" -> {"message": "¡Qué buen plan! Para disfrutar la brisa y caer la tarde frente al mar, el Castillo de Salgar tiene una vista espectacular, y el Muelle de Puerto Colombia es ideal para caminar juntos junto a la playa.", "recommendedPlaceIds": ["castillo-de-salgar", "muelle-puerto-colombia"]}',
+        '- Usuario: "Gracias" -> {"message": "¡Con todo gusto! Si se te ocurre otro plan o quieres armar tu ruta para el finde, aquí estoy para ayudarte.", "recommendedPlaceIds": []}',
+        '',
+        `CATÁLOGO OFICIAL DISPONIBLE:\n${JSON.stringify(compactCatalog)}`,
+      ].join('\n');
 
-      const userPrompt = `Consulta del usuario: "${query}"\n\nCatálogo oficial disponible (usa únicamente estos valores en "id"):\n${JSON.stringify(compactCatalog)}`;
+      const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+        { role: 'system', content: systemPrompt },
+        ...sanitizedHistory,
+        { role: 'user', content: query },
+      ];
 
       const startedAt = Date.now();
       const availableModels = await getAvailableGroqModels(apiKey);
@@ -224,11 +265,11 @@ async function startServer() {
       let usedModel = '';
 
       for (const model of modelsToTry) {
-        let result = await callGroqModel(apiKey, model, systemPrompt, userPrompt, true);
+        let result = await callGroqModel(apiKey, model, messages, true);
 
         // Si el modelo falla con 400 (ej. no soporta response_format o json_validate_failed), reintentamos sin response_format
         if (!result.ok && result.status === 400) {
-          result = await callGroqModel(apiKey, model, systemPrompt, userPrompt, false);
+          result = await callGroqModel(apiKey, model, messages, false);
         }
 
         finalResult = result;
