@@ -1,7 +1,14 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle } from 'lucide-react';
 import rawPlaces from './data/places.json';
-import { MoodFilterOption, Place, PlaceCategory } from './types/place';
+import {
+  MoodFilterOption,
+  Place,
+  PlaceCategory,
+  PlanMoveDirection,
+  PlanToastState,
+} from './types/place';
 import { Header } from './components/layout/Header';
 import { HeroBanner } from './components/layout/HeroBanner';
 import { CategoryFilter } from './components/filters/CategoryFilter';
@@ -9,9 +16,12 @@ import { MoodFilter } from './components/filters/MoodFilter';
 import { SearchBar } from './components/filters/SearchBar';
 import { PlaceList } from './components/places/PlaceList';
 import { PlaceDetailModal } from './components/detail/PlaceDetailModal';
+import { PlanBar } from './components/plan/PlanBar';
+import { PlanModal } from './components/plan/PlanModal';
 import { MobileExperienceModal } from './components/layout/MobileExperienceModal';
 import { Footer } from './components/layout/Footer';
 import { normalizeText } from './utils/text';
+import { iosSpringSnappy } from './utils/physics';
 
 const CATEGORIES: PlaceCategory[] = [
   'Todos',
@@ -29,6 +39,30 @@ const MOODS: MoodFilterOption[] = [
   'Al Aire Libre',
 ];
 
+const MAX_PLAN_PLACES = 4;
+const PLAN_STORAGE_KEY = 'quillaspot_plan_ids';
+
+const loadInitialPlan = (catalog: Place[]): Place[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(PLAN_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    const uniqueIds = Array.from(
+      new Set(parsed.filter((item): item is string => typeof item === 'string'))
+    );
+
+    return uniqueIds
+      .map((id) => catalog.find((place) => place.id === id))
+      .filter((place): place is Place => Boolean(place))
+      .slice(0, MAX_PLAN_PLACES);
+  } catch {
+    return [];
+  }
+};
+
 export default function App() {
   const [places] = useState<Place[]>(rawPlaces as Place[]);
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory>('Todos');
@@ -39,6 +73,11 @@ export default function App() {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   // Estado para el modal de experiencia móvil en desktop
   const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
+
+  // Estado Fase 2: Armar Plan (hasta 4 lugares, persistido en localStorage)
+  const [plan, setPlan] = useState<Place[]>(() => loadInitialPlan(rawPlaces as Place[]));
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState<boolean>(false);
+  const [planToast, setPlanToast] = useState<PlanToastState | null>(null);
 
   // Conteo dinámico de planes por categoría
   const categoryCounts = useMemo(() => {
@@ -146,6 +185,88 @@ export default function App() {
     }
   };
 
+  // Sincronización del itinerario con localStorage
+  useEffect(() => {
+    try {
+      const ids = plan.map((place) => place.id);
+      window.localStorage.setItem(PLAN_STORAGE_KEY, JSON.stringify(ids));
+    } catch {
+      // Ignorar errores de almacenamiento (modo privado / cuota excedida)
+    }
+  }, [plan]);
+
+  // Cierre automático del modal del itinerario si se queda vacío
+  useEffect(() => {
+    if (plan.length === 0 && isPlanModalOpen) {
+      setIsPlanModalOpen(false);
+    }
+  }, [plan.length, isPlanModalOpen]);
+
+  // Ocultar automáticamente el toast flotante de límite
+  useEffect(() => {
+    if (!planToast) return;
+    const timer = window.setTimeout(() => {
+      setPlanToast(null);
+    }, 2600);
+    return () => window.clearTimeout(timer);
+  }, [planToast]);
+
+  const isPlaceInPlan = useCallback(
+    (placeId: string): boolean => plan.some((item) => item.id === placeId),
+    [plan]
+  );
+
+  const togglePlaceInPlan = useCallback(
+    (place: Place) => {
+      const exists = plan.some((item) => item.id === place.id);
+      if (exists) {
+        setPlan((prev) => prev.filter((item) => item.id !== place.id));
+        return;
+      }
+
+      if (plan.length >= MAX_PLAN_PLACES) {
+        setPlanToast({
+          id: Date.now(),
+          message: `Máximo ${MAX_PLAN_PLACES} lugares por plan`,
+        });
+        return;
+      }
+
+      setPlan((prev) => [...prev, place]);
+    },
+    [plan]
+  );
+
+  const removePlaceFromPlan = useCallback((placeId: string) => {
+    setPlan((prev) => prev.filter((item) => item.id !== placeId));
+  }, []);
+
+  const movePlaceInPlan = useCallback(
+    (index: number, direction: PlanMoveDirection) => {
+      setPlan((prev) => {
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        if (
+          index < 0 ||
+          index >= prev.length ||
+          targetIndex < 0 ||
+          targetIndex >= prev.length
+        ) {
+          return prev;
+        }
+        const next = [...prev];
+        const [movedItem] = next.splice(index, 1);
+        next.splice(targetIndex, 0, movedItem);
+        return next;
+      });
+    },
+    []
+  );
+
+  const clearPlan = useCallback(() => {
+    setPlan([]);
+    setIsPlanModalOpen(false);
+  }, []);
+
   const hasActiveFilters =
     selectedCategory !== 'Todos' ||
     selectedMood !== 'Todos los planes' ||
@@ -156,8 +277,33 @@ export default function App() {
       {/* Header estilo iOS Navigation Bar translúcido */}
       <Header onOpenQrModal={() => setIsQrModalOpen(true)} />
 
+      {/* Toast flotante estilo iOS cuando se alcanza el límite de 4 lugares */}
+      <AnimatePresence>
+        {planToast && (
+          <div className="fixed top-16 sm:top-20 inset-x-0 z-60 flex justify-center px-4 pointer-events-none">
+            <motion.div
+              key={planToast.id}
+              role="status"
+              aria-live="polite"
+              initial={{ opacity: 0, y: -16, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.94 }}
+              transition={iosSpringSnappy}
+              className="pointer-events-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 backdrop-blur-xl text-white text-xs sm:text-sm font-semibold shadow-xl border border-white/10"
+            >
+              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>{planToast.message}</span>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Contenedor Responsivo: Mobile, Tablet y Desktop (máximo 1200px con padding óptico) */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4 sm:gap-6 pb-12">
+      <main
+        className={`flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4 sm:gap-6 transition-[padding] duration-200 ${
+          plan.length > 0 ? 'pb-24' : 'pb-12'
+        }`}
+      >
         <HeroBanner totalPlaces={places.length} />
 
         {/* Barra de controles: Búsqueda, Categorías y Filtro por Mood */}
@@ -203,18 +349,45 @@ export default function App() {
           places={filteredAndSortedPlaces}
           selectedCategory={selectedCategory}
           selectedMood={selectedMood}
+          isPlaceInPlan={isPlaceInPlan}
+          onTogglePlan={togglePlaceInPlan}
           onSelectPlace={handleSelectPlace}
           onResetFilters={handleResetFilters}
           hasActiveFilters={hasActiveFilters}
         />
       </main>
 
+      {/* Barra Flotante Inferior de Resumen del Plan */}
+      <AnimatePresence>
+        {plan.length > 0 && (
+          <PlanBar
+            plan={plan}
+            onOpenModal={() => setIsPlanModalOpen(true)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Apple Fluid Bottom Sheet de Detalle con AnimatePresence para salida animada */}
       <AnimatePresence>
         {selectedPlace && (
           <PlaceDetailModal
             place={selectedPlace}
+            isInPlan={isPlaceInPlan(selectedPlace.id)}
+            onTogglePlan={togglePlaceInPlan}
             onClose={handleCloseModal}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Itinerario y Compartir por WhatsApp */}
+      <AnimatePresence>
+        {isPlanModalOpen && plan.length > 0 && (
+          <PlanModal
+            plan={plan}
+            onClose={() => setIsPlanModalOpen(false)}
+            onMovePlace={movePlaceInPlan}
+            onRemovePlace={removePlaceFromPlan}
+            onClearPlan={clearPlan}
           />
         )}
       </AnimatePresence>

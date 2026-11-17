@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Star, MapPin, Sparkles, ChevronRight } from 'lucide-react';
+import { Star, MapPin, Sparkles, ChevronRight, Plus, Check } from 'lucide-react';
 import { Place } from '../../types/place';
 
 interface PlaceCardProps {
   place: Place;
+  isInPlan?: boolean;
+  onTogglePlan?: (place: Place) => void;
   onSelectPlace?: (place: Place) => void;
 }
 
@@ -27,7 +29,12 @@ const getPriceBadgeStyle = (level: string) => {
   return 'bg-slate-900/90 text-white border-slate-700/40';
 };
 
-export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onSelectPlace }) => {
+export const PlaceCard: React.FC<PlaceCardProps> = ({
+  place,
+  isInPlan = false,
+  onTogglePlan,
+  onSelectPlace,
+}) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -85,8 +92,8 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onSelectPlace }) =>
             )}
           </div>
 
-          {/* Badge derecho: Nivel de precio con idéntica altura (h-6) e icono $ integrado */}
-          <div>
+          {/* Badge derecho: Nivel de precio y botón rápido para armar plan */}
+          <div className="flex items-center gap-1.5">
             <span
               className={`h-6 inline-flex items-center gap-1 pl-2 pr-2.5 rounded-full text-[11px] font-semibold tracking-wide border shadow-xs backdrop-blur-md ${priceBadgeClass}`}
             >
@@ -95,6 +102,34 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onSelectPlace }) =>
               </span>
               <span>{place.priceLevel}</span>
             </span>
+
+            {onTogglePlan && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTogglePlan(place);
+                }}
+                aria-label={
+                  isInPlan
+                    ? `Quitar ${place.name} de tu plan`
+                    : `Agregar ${place.name} a tu plan`
+                }
+                aria-pressed={isInPlan}
+                title={isInPlan ? 'En tu plan (toca para quitar)' : 'Agregar a tu plan'}
+                className={`pointer-events-auto w-7 h-7 rounded-full flex items-center justify-center transition-all duration-100 ease-out active:scale-90 cursor-pointer shrink-0 ${
+                  isInPlan
+                    ? 'bg-slate-900 text-white shadow-md border border-white/20'
+                    : 'bg-white/80 backdrop-blur-md border border-black/5 text-slate-700 hover:bg-white shadow-xs'
+                }`}
+              >
+                {isInPlan ? (
+                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                ) : (
+                  <Plus className="w-3.5 h-3.5 stroke-[2.25]" />
+                )}
+              </button>
+            )}
           </div>
         </div>
 

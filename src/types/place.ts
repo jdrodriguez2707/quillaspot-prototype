@@ -32,3 +32,11 @@ export interface Place {
   whatsappMessage: string;
   isFeatured: boolean;
 }
+
+export type PlanMoveDirection = 'up' | 'down';
+
+export interface PlanToastState {
+  id: number;
+  message: string;
+}
+

@@ -11,13 +11,16 @@ import {
   Info, 
   Wallet, 
   Share2, 
-  Check 
+  Check,
+  Plus
 } from 'lucide-react';
 import { Place } from '../../types/place';
 import { iosSpringMomentum } from '../../utils/physics';
 
 interface PlaceDetailModalProps {
   place: Place | null;
+  isInPlan?: boolean;
+  onTogglePlan?: (place: Place) => void;
   onClose: () => void;
 }
 
@@ -39,7 +42,12 @@ const getPriceBadgeStyle = (level: string) => {
   return 'bg-slate-900/95 text-white border-slate-700/40';
 };
 
-export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClose }) => {
+export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
+  place,
+  isInPlan = false,
+  onTogglePlan,
+  onClose,
+}) => {
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -188,23 +196,51 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
               <X className="w-5 h-5" />
             </button>
 
-            <button
-              onClick={handleShare}
-              className="h-9 px-3 rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 flex items-center gap-1.5 text-xs font-semibold text-white transition-transform duration-100 ease-out cursor-pointer shadow-sm active:scale-95"
-              title="Compartir este plan"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>¡Copiado!</span>
-                </>
-              ) : (
-                <>
-                  <Share2 className="w-3.5 h-3.5" />
-                  <span>Compartir</span>
-                </>
+            <div className="flex items-center gap-2">
+              {onTogglePlan && (
+                <button
+                  type="button"
+                  onClick={() => onTogglePlan(place)}
+                  aria-pressed={isInPlan}
+                  className={`h-9 px-3 rounded-full backdrop-blur-md border flex items-center gap-1.5 text-xs font-semibold transition-all duration-100 ease-out cursor-pointer shadow-sm active:scale-95 ${
+                    isInPlan
+                      ? 'bg-amber-500 border-amber-400/60 text-slate-950'
+                      : 'bg-black/45 hover:bg-black/65 border-white/20 text-white'
+                  }`}
+                  title={isInPlan ? 'Quitar de tu plan' : 'Agregar a tu plan'}
+                >
+                  {isInPlan ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>En tu plan</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-3.5 h-3.5 stroke-[2.25]" />
+                      <span>Al plan</span>
+                    </>
+                  )}
+                </button>
               )}
-            </button>
+
+              <button
+                onClick={handleShare}
+                className="h-9 px-3 rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 flex items-center gap-1.5 text-xs font-semibold text-white transition-transform duration-100 ease-out cursor-pointer shadow-sm active:scale-95"
+                title="Compartir este plan"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>¡Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span>Compartir</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Badges sobre la imagen en el bottom sheet */}

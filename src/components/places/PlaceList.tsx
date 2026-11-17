@@ -8,6 +8,8 @@ interface PlaceListProps {
   places: Place[];
   selectedCategory: PlaceCategory;
   selectedMood: MoodFilterOption;
+  isPlaceInPlan?: (placeId: string) => boolean;
+  onTogglePlan?: (place: Place) => void;
   onSelectPlace?: (place: Place) => void;
   onResetFilters?: () => void;
   hasActiveFilters?: boolean;
@@ -17,6 +19,8 @@ export const PlaceList: React.FC<PlaceListProps> = ({
   places,
   selectedCategory,
   selectedMood,
+  isPlaceInPlan,
+  onTogglePlan,
   onSelectPlace,
   onResetFilters,
   hasActiveFilters,
@@ -90,6 +94,8 @@ export const PlaceList: React.FC<PlaceListProps> = ({
           <PlaceCard
             key={place.id}
             place={place}
+            isInPlan={isPlaceInPlan?.(place.id) ?? false}
+            onTogglePlan={onTogglePlan}
             onSelectPlace={onSelectPlace}
           />
         ))}
