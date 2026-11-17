@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Sparkles } from 'lucide-react';
 import rawPlaces from './data/places.json';
 import {
   MoodFilterOption,
@@ -18,6 +18,7 @@ import { PlaceList } from './components/places/PlaceList';
 import { PlaceDetailModal } from './components/detail/PlaceDetailModal';
 import { PlanBar } from './components/plan/PlanBar';
 import { PlanModal } from './components/plan/PlanModal';
+import { QuillaBotModal } from './components/bot/QuillaBotModal';
 import { MobileExperienceModal } from './components/layout/MobileExperienceModal';
 import { Footer } from './components/layout/Footer';
 import { normalizeText } from './utils/text';
@@ -78,6 +79,8 @@ export default function App() {
   const [plan, setPlan] = useState<Place[]>(() => loadInitialPlan(rawPlaces as Place[]));
   const [isPlanModalOpen, setIsPlanModalOpen] = useState<boolean>(false);
   const [planToast, setPlanToast] = useState<PlanToastState | null>(null);
+  // Estado Fase 3: QuillaBot (Asistente IA)
+  const [isQuillaBotOpen, setIsQuillaBotOpen] = useState<boolean>(false);
 
   // Conteo dinámico de planes por categoría
   const categoryCounts = useMemo(() => {
@@ -277,6 +280,14 @@ export default function App() {
     setIsPlanModalOpen(true);
   }, []);
 
+  const handleSelectPlaceFromBot = useCallback((place: Place) => {
+    setIsQuillaBotOpen(false);
+    setSelectedPlace(place);
+    const url = new URL(window.location.href);
+    url.searchParams.set('place', place.id);
+    window.history.pushState({ placeId: place.id }, '', url.toString());
+  }, []);
+
   const hasActiveFilters =
     selectedCategory !== 'Todos' ||
     selectedMood !== 'Todos los planes' ||
@@ -353,6 +364,18 @@ export default function App() {
               />
             </div>
           </div>
+
+          {/* Activador Fase 3: QuillaBot */}
+          <div className="border-t border-black/[0.05] pt-2.5 flex justify-center sm:justify-start">
+            <button
+              type="button"
+              onClick={() => setIsQuillaBotOpen(true)}
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-4 py-2 text-xs sm:text-sm font-medium shadow-md inline-flex items-center gap-2 active:scale-95 transition-transform duration-100 ease-out cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>¿No sabes qué hacer? Pregúntale a QuillaBot</span>
+            </button>
+          </div>
         </div>
 
         {/* Catálogo ordenado y filtrado */}
@@ -401,6 +424,19 @@ export default function App() {
             onMovePlace={movePlaceInPlan}
             onRemovePlace={removePlaceFromPlan}
             onClearPlan={clearPlan}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Modal QuillaBot (Asistente Inteligente con Groq) */}
+      <AnimatePresence>
+        {isQuillaBotOpen && (
+          <QuillaBotModal
+            catalog={places}
+            isPlaceInPlan={isPlaceInPlan}
+            onTogglePlan={togglePlaceInPlan}
+            onSelectPlace={handleSelectPlaceFromBot}
+            onClose={() => setIsQuillaBotOpen(false)}
           />
         )}
       </AnimatePresence>

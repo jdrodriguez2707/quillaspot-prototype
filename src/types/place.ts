@@ -40,3 +40,18 @@ export interface PlanToastState {
   message: string;
 }
 
+export interface QuillaBotResponse {
+  message: string;
+  recommendedPlaceIds: string[];
+}
+
+export interface QuillaBotErrorCode {
+  code: 'MISSING_API_KEY' | 'INVALID_REQUEST' | 'UPSTREAM_ERROR' | 'NETWORK_ERROR';
+}
+
+export interface QuillaBotErrorResponse {
+  error: string;
+  code?: QuillaBotErrorCode['code'];
+}
+
+
