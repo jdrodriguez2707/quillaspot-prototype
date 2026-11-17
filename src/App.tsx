@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import rawPlaces from './data/places.json';
-import { Place, PlaceCategory } from './types/place';
+import { MoodFilterOption, Place, PlaceCategory } from './types/place';
 import { Header } from './components/layout/Header';
 import { HeroBanner } from './components/layout/HeroBanner';
 import { CategoryFilter } from './components/filters/CategoryFilter';
+import { MoodFilter } from './components/filters/MoodFilter';
 import { SearchBar } from './components/filters/SearchBar';
 import { PlaceList } from './components/places/PlaceList';
 import { PlaceDetailModal } from './components/detail/PlaceDetailModal';
@@ -19,9 +20,19 @@ const CATEGORIES: PlaceCategory[] = [
   'Cultura y Ocio',
 ];
 
+const MOODS: MoodFilterOption[] = [
+  'Todos los planes',
+  'En Pareja',
+  'Con Amigos',
+  'En Familia',
+  'Plan Barato',
+  'Al Aire Libre',
+];
+
 export default function App() {
   const [places] = useState<Place[]>(rawPlaces as Place[]);
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory>('Todos');
+  const [selectedMood, setSelectedMood] = useState<MoodFilterOption>('Todos los planes');
   const [searchTerm, setSearchTerm] = useState<string>('');
   
   // Estado para el Fluid Bottom Sheet
@@ -51,7 +62,12 @@ export default function App() {
       );
     }
 
-    // 2. Filtrar por término de búsqueda (insensible a acentos/tildes y mayúsculas)
+    // 2. Filtrar por Mood (ocasión y ambiente)
+    if (selectedMood !== 'Todos los planes') {
+      result = result.filter((p) => p.moods.includes(selectedMood));
+    }
+
+    // 3. Filtrar por término de búsqueda (insensible a acentos/tildes y mayúsculas)
     const normalizedQuery = normalizeText(searchTerm);
     if (normalizedQuery !== '') {
       result = result.filter((p) => {
@@ -75,13 +91,13 @@ export default function App() {
       });
     }
 
-    // 3. Regla estricta de negocio: isFeatured: true primero, luego mayor rating
+    // 4. Regla estricta de negocio: isFeatured: true primero, luego mayor rating
     return result.sort((a, b) => {
       if (a.isFeatured && !b.isFeatured) return -1;
       if (!a.isFeatured && b.isFeatured) return 1;
       return b.rating - a.rating;
     });
-  }, [places, selectedCategory, searchTerm]);
+  }, [places, selectedCategory, selectedMood, searchTerm]);
 
   // Detección de deep-link ?place=ID en la URL al cargar la página o al navegar con el historial (popstate)
   useEffect(() => {
@@ -108,6 +124,7 @@ export default function App() {
 
   const handleResetFilters = () => {
     setSelectedCategory('Todos');
+    setSelectedMood('Todos los planes');
     setSearchTerm('');
   };
 
@@ -129,7 +146,10 @@ export default function App() {
     }
   };
 
-  const hasActiveFilters = selectedCategory !== 'Todos' || searchTerm.trim() !== '';
+  const hasActiveFilters =
+    selectedCategory !== 'Todos' ||
+    selectedMood !== 'Todos los planes' ||
+    searchTerm.trim() !== '';
 
   return (
     <div className="min-h-screen bg-[#F2F2F7] text-slate-900 flex flex-col font-sans antialiased selection:bg-amber-200">
@@ -140,31 +160,49 @@ export default function App() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4 sm:gap-6 pb-12">
         <HeroBanner totalPlaces={places.length} />
 
-        {/* Barra de controles: Búsqueda y Filtros de categoría */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white/50 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl border border-black/[0.04] shadow-2xs">
-          {/* Barra de búsqueda interactiva */}
-          <div className="w-full md:max-w-md">
-            <SearchBar
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              onClear={() => setSearchTerm('')}
-            />
+        {/* Barra de controles: Búsqueda, Categorías y Filtro por Mood */}
+        <div className="flex flex-col gap-2.5 bg-white/50 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl border border-black/[0.04] shadow-2xs">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            {/* Barra de búsqueda interactiva */}
+            <div className="w-full md:max-w-md">
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                onClear={() => setSearchTerm('')}
+              />
+            </div>
+
+            {/* Filtros de Categoría adaptados a desktop/tablet */}
+            <div className="w-full md:w-auto overflow-hidden">
+              <CategoryFilter
+                categories={CATEGORIES}
+                selectedCategory={selectedCategory}
+                onSelectCategory={setSelectedCategory}
+                categoryCounts={categoryCounts}
+              />
+            </div>
           </div>
 
-          {/* Filtros de Categoría adaptados a desktop/tablet */}
-          <div className="w-full md:w-auto overflow-hidden">
-            <CategoryFilter
-              categories={CATEGORIES}
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-              categoryCounts={categoryCounts}
-            />
+          {/* Fila inferior: Filtro por Mood (Ocasión y Ambiente) */}
+          <div className="border-t border-black/[0.05] pt-2.5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <span className="text-[11px] font-semibold text-slate-400 px-1 shrink-0 whitespace-nowrap">
+              ¿Cuál es el plan?
+            </span>
+            <div className="w-full overflow-hidden">
+              <MoodFilter
+                moods={MOODS}
+                selectedMood={selectedMood}
+                onSelectMood={setSelectedMood}
+              />
+            </div>
           </div>
         </div>
 
         {/* Catálogo ordenado y filtrado */}
         <PlaceList
           places={filteredAndSortedPlaces}
+          selectedCategory={selectedCategory}
+          selectedMood={selectedMood}
           onSelectPlace={handleSelectPlace}
           onResetFilters={handleResetFilters}
           hasActiveFilters={hasActiveFilters}

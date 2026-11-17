@@ -4,6 +4,15 @@ export type PlaceCategory =
   | 'Ecoturismo' 
   | 'Cultura y Ocio';
 
+export type PlaceMood =
+  | 'En Pareja'
+  | 'Con Amigos'
+  | 'En Familia'
+  | 'Plan Barato'
+  | 'Al Aire Libre';
+
+export type MoodFilterOption = 'Todos los planes' | PlaceMood;
+
 export interface Place {
   id: string;
   name: string;
@@ -16,6 +25,7 @@ export interface Place {
   fullDescription?: string;
   imageUrl: string;
   tags?: string[];
+  moods: PlaceMood[];
   address?: string;
   mapsUrl: string;
   whatsapp: string;

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Utensils, Trees, Landmark, Compass } from 'lucide-react';
 import { PlaceCategory } from '../../types/place';
 import { iosSpringSnappy } from '../../utils/physics';
+import { getCategoryIcon } from '../../utils/filterIcons';
 
 interface CategoryFilterProps {
   categories: PlaceCategory[];
@@ -11,30 +11,39 @@ interface CategoryFilterProps {
   categoryCounts: Record<string, number>;
 }
 
-// Iconografía refinada de iOS
-const getCategoryIcon = (category: PlaceCategory) => {
-  switch (category) {
-    case 'Gastronomía':
-      return <Utensils className="w-3.5 h-3.5" />;
-    case 'Ecoturismo':
-      return <Trees className="w-3.5 h-3.5" />;
-    case 'Cultura y Ocio':
-      return <Landmark className="w-3.5 h-3.5" />;
-    default:
-      return <Compass className="w-3.5 h-3.5" />;
-  }
-};
-
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories,
   selectedCategory,
   onSelectCategory,
   categoryCounts,
 }) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleSelect = (
+    cat: PlaceCategory,
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    onSelectCategory(cat);
+
+    const container = scrollContainerRef.current;
+    const button = e.currentTarget;
+    if (container && container.scrollWidth > container.clientWidth) {
+      const targetLeft =
+        button.offsetLeft - (container.clientWidth - button.offsetWidth) / 2;
+      container.scrollTo({
+        left: Math.max(0, targetLeft),
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <div className="w-full">
       {/* Scroll táctil horizontal en móviles y flex envolvente limpio en desktop/tablet */}
-      <div className="flex items-center md:justify-end gap-2 overflow-x-auto no-scrollbar py-0.5 px-0.5 scroll-smooth">
+      <div
+        ref={scrollContainerRef}
+        className="relative flex items-center md:justify-end gap-2 overflow-x-auto no-scrollbar py-0.5 px-0.5 scroll-smooth"
+      >
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat;
           const count = categoryCounts[cat] ?? 0;
@@ -42,8 +51,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           return (
             <button
               key={cat}
-              onClick={() => onSelectCategory(cat)}
-              className={`relative shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold cursor-pointer select-none active:scale-[0.96] transition-transform duration-100 ease-out ${
+              type="button"
+              onClick={(e) => handleSelect(cat, e)}
+              className={`relative shrink-0 whitespace-nowrap inline-flex items-center h-9 px-3.5 rounded-full text-xs font-semibold cursor-pointer select-none active:scale-[0.96] transition-transform duration-100 ease-out ${
                 isSelected
                   ? 'text-white'
                   : 'bg-white/80 text-slate-600 border border-black/[0.04] backdrop-blur-md shadow-2xs hover:bg-white'
@@ -65,7 +75,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 </span>
                 <span className="tracking-tight">{cat}</span>
                 <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums ${
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums leading-none ${
                     isSelected
                       ? 'bg-white/20 text-white'
                       : 'bg-black/[0.05] text-slate-500'

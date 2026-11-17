@@ -26,7 +26,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ totalPlaces }) => {
           <p className="text-xs sm:text-sm text-amber-100/90 mt-2 max-w-xl leading-relaxed">
             Encuentra planes gastronómicos, culturales y de naturaleza en Barranquilla y municipios del Atlántico.
           </p>
-
+          {/* 
           <div className="mt-4 flex flex-wrap items-center gap-2.5 text-[11px] sm:text-xs font-medium">
             <span className="flex items-center gap-1.5 bg-black/20 backdrop-blur-xs px-3 py-1.5 rounded-xl text-white">
               <Compass className="w-3.5 h-3.5 text-yellow-300" />
@@ -37,6 +37,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ totalPlaces }) => {
               <span>Clic y llega directo</span>
             </span>
           </div>
+          */}
         </div>
       </div>
     </section>

@@ -1,10 +1,13 @@
 import React from 'react';
-import { Place } from '../../types/place';
+import { MoodFilterOption, Place, PlaceCategory } from '../../types/place';
 import { PlaceCard } from './PlaceCard';
-import { Sparkles, MapPin, RotateCcw } from 'lucide-react';
+import { MapPin, RotateCcw } from 'lucide-react';
+import { getCategoryIcon, getMoodIcon } from '../../utils/filterIcons';
 
 interface PlaceListProps {
   places: Place[];
+  selectedCategory: PlaceCategory;
+  selectedMood: MoodFilterOption;
   onSelectPlace?: (place: Place) => void;
   onResetFilters?: () => void;
   hasActiveFilters?: boolean;
@@ -12,6 +15,8 @@ interface PlaceListProps {
 
 export const PlaceList: React.FC<PlaceListProps> = ({
   places,
+  selectedCategory,
+  selectedMood,
   onSelectPlace,
   onResetFilters,
   hasActiveFilters,
@@ -24,7 +29,7 @@ export const PlaceList: React.FC<PlaceListProps> = ({
         </div>
         <h3 className="text-sm font-bold tracking-tight text-slate-900">No encontramos planes con ese filtro</h3>
         <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto leading-relaxed">
-          Prueba con otra palabra clave o explora todas las categorías disponibles.
+          Prueba con otra palabra clave, categoría o cambia el mood seleccionado.
         </p>
         {hasActiveFilters && onResetFilters && (
           <button
@@ -39,8 +44,8 @@ export const PlaceList: React.FC<PlaceListProps> = ({
     );
   }
 
-  // Conteo de destacados dentro del conjunto actualmente filtrado
-  const featuredCount = places.filter((p) => p.isFeatured).length;
+  const showCategoryIcon = selectedCategory !== 'Todos';
+  const showMoodIcon = selectedMood !== 'Todos los planes';
 
   return (
     <section className="px-0 flex flex-col gap-3.5">
@@ -55,11 +60,27 @@ export const PlaceList: React.FC<PlaceListProps> = ({
           </span>
         </div>
 
-        {featuredCount > 0 && (
-          <span className="text-[11px] sm:text-xs font-semibold text-amber-700 flex items-center gap-1 bg-amber-500/10 px-2.5 py-0.5 rounded-full">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            {featuredCount} destacados
-          </span>
+        {(showCategoryIcon || showMoodIcon) && (
+          <div className="flex items-center gap-1.5">
+            {showCategoryIcon && (
+              <span
+                className="w-7 h-7 rounded-full bg-slate-900 text-amber-400 flex items-center justify-center shadow-2xs"
+                title={selectedCategory}
+                aria-label={`Categoría activa: ${selectedCategory}`}
+              >
+                {getCategoryIcon(selectedCategory)}
+              </span>
+            )}
+            {showMoodIcon && (
+              <span
+                className="w-7 h-7 rounded-full bg-slate-900 text-amber-400 flex items-center justify-center shadow-2xs"
+                title={selectedMood}
+                aria-label={`Mood activo: ${selectedMood}`}
+              >
+                {getMoodIcon(selectedMood)}
+              </span>
+            )}
+          </div>
         )}
       </div>
 
