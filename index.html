@@ -3,13 +3,93 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <script>
+      (function () {
+        // En AI Studio Build el HMR de Vite está desactivado en el entorno de desarrollo.
+        // Interceptamos la conexión WebSocket de @vite/client para evitar intentos fallidos
+        // y prevenimos los errores no controlados ("WebSocket closed without opened").
+        try {
+          var OrigWS = window.WebSocket;
+          if (OrigWS) {
+            window.WebSocket = function (url, protocols) {
+              var isHmr =
+                protocols === 'vite-hmr' ||
+                (Array.isArray(protocols) && protocols.indexOf('vite-hmr') !== -1) ||
+                (typeof url === 'string' && (url.indexOf('token=') !== -1 || url.indexOf('24678') !== -1));
+
+              if (isHmr) {
+                var target = new EventTarget();
+                var mock = {
+                  readyState: 1, // OPEN
+                  OPEN: 1,
+                  CLOSED: 3,
+                  CLOSING: 2,
+                  CONNECTING: 0,
+                  url: String(url),
+                  protocol: 'vite-hmr',
+                  binaryType: 'blob',
+                  bufferedAmount: 0,
+                  extensions: '',
+                  send: function () {},
+                  close: function () {
+                    mock.readyState = 3;
+                    try {
+                      target.dispatchEvent(new Event('close'));
+                    } catch (e) {}
+                  },
+                  addEventListener: function (type, listener, options) {
+                    target.addEventListener(type, listener, options);
+                  },
+                  removeEventListener: function (type, listener, options) {
+                    target.removeEventListener(type, listener, options);
+                  },
+                  dispatchEvent: function (event) {
+                    return target.dispatchEvent(event);
+                  },
+                };
+                setTimeout(function () {
+                  try {
+                    target.dispatchEvent(new Event('open'));
+                  } catch (e) {}
+                }, 0);
+                return mock;
+              }
+              return new OrigWS(url, protocols);
+            };
+            window.WebSocket.prototype = OrigWS.prototype;
+            window.WebSocket.OPEN = 1;
+            window.WebSocket.CLOSED = 3;
+            window.WebSocket.CLOSING = 2;
+            window.WebSocket.CONNECTING = 0;
+          }
+        } catch (err) {}
+
+        // Supresión de errores de rechazo no capturados de WebSocket
+        window.addEventListener('unhandledrejection', function (e) {
+          try {
+            var reason = e && (e.reason || e);
+            var msg = (reason && (reason.message || reason.toString())) || '';
+            var stack = (reason && reason.stack) || '';
+            if (
+              msg.indexOf('WebSocket') !== -1 ||
+              msg.indexOf('vite-hmr') !== -1 ||
+              msg.indexOf('failed to connect to websocket') !== -1 ||
+              stack.indexOf('@vite/client') !== -1
+            ) {
+              e.preventDefault();
+              e.stopImmediatePropagation();
+            }
+          } catch (err) {}
+        });
+      })();
+    </script>
     <title>QuillaSpot - Planes en Barranquilla y Atlántico</title>
     <link rel="icon" type="image/png" href="/assets/logo-quillaspot.png" />
     <link rel="apple-touch-icon" href="/assets/logo-quillaspot.png" />
-    <meta name="description" content="Tu guía rápida y sencilla para descubrir planes turísticos, gastronómicos y de ocio en Barranquilla y el Atlántico." />
+    <meta name="description" content="Tu guía mobile-first para descubrir planes turísticos, gastronómicos y de ocio en Barranquilla y el Atlántico con cero login." />
     <meta name="theme-color" content="#f2f2f7" />
     <meta property="og:title" content="QuillaSpot - Planes en Barranquilla y Atlántico" />
-    <meta property="og:description" content="Tu guía rápida y sencilla para descubrir planes turísticos, gastronómicos y de ocio en Barranquilla y el Atlántico." />
+    <meta property="og:description" content="Tu guía mobile-first para descubrir planes turísticos, gastronómicos y de ocio en Barranquilla y el Atlántico con cero login." />
     <meta property="og:image" content="/assets/logo-quillaspot.png" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />

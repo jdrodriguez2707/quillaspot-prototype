@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express, { type Request, type Response } from 'express';
+import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -378,8 +379,13 @@ async function startServer() {
   });
 
   if (process.env.NODE_ENV !== 'production') {
+    const dummyWsServer = http.createServer();
     const vite = await createViteServer({
-      server: { middlewareMode: true, hmr: false },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+        ws: { server: dummyWsServer },
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
