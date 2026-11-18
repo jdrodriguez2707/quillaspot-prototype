@@ -87,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenQrModal }) => {
               </h1>
             </div>
             <p className="text-[11px] font-medium tracking-normal text-slate-500 leading-none mt-0.5">
-              Arma tu plan en el Atlántico
+              Planes en Barranquilla y el Atlántico
             </p>
           </div>
         </div>
