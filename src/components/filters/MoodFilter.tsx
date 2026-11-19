@@ -21,11 +21,12 @@ export const MoodFilter: React.FC<MoodFilterProps> = ({
     mood: MoodFilterOption,
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onSelectMood(mood);
+    const nextMood: MoodFilterOption = selectedMood === mood ? 'Todos los planes' : mood;
+    onSelectMood(nextMood);
 
     const container = scrollContainerRef.current;
     const button = e.currentTarget;
-    if (container && container.scrollWidth > container.clientWidth) {
+    if (nextMood !== 'Todos los planes' && container && container.scrollWidth > container.clientWidth) {
       const targetLeft =
         button.offsetLeft - (container.clientWidth - button.offsetWidth) / 2;
       container.scrollTo({

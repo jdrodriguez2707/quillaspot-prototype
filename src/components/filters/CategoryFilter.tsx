@@ -23,11 +23,12 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     cat: PlaceCategory,
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onSelectCategory(cat);
+    const nextCategory: PlaceCategory = selectedCategory === cat ? 'Todos' : cat;
+    onSelectCategory(nextCategory);
 
     const container = scrollContainerRef.current;
     const button = e.currentTarget;
-    if (container && container.scrollWidth > container.clientWidth) {
+    if (nextCategory !== 'Todos' && container && container.scrollWidth > container.clientWidth) {
       const targetLeft =
         button.offsetLeft - (container.clientWidth - button.offsetWidth) / 2;
       container.scrollTo({
@@ -42,6 +43,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       {/* Scroll táctil horizontal en móviles y flex envolvente limpio en desktop/tablet */}
       <div
         ref={scrollContainerRef}
+        role="group"
+        aria-label="Filtrar por categoría"
         className="relative flex items-center md:justify-end gap-2 overflow-x-auto no-scrollbar py-0.5 px-0.5 scroll-smooth"
       >
         {categories.map((cat) => {
@@ -53,6 +56,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
               key={cat}
               type="button"
               onClick={(e) => handleSelect(cat, e)}
+              aria-pressed={isSelected}
               className={`relative shrink-0 whitespace-nowrap inline-flex items-center h-9 px-3.5 rounded-full text-xs font-semibold cursor-pointer select-none active:scale-[0.96] transition-transform duration-100 ease-out ${
                 isSelected
                   ? 'text-white'
@@ -74,15 +78,6 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   {getCategoryIcon(cat)}
                 </span>
                 <span className="tracking-tight">{cat}</span>
-                <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums leading-none ${
-                    isSelected
-                      ? 'bg-white/20 text-white'
-                      : 'bg-black/[0.05] text-slate-500'
-                  }`}
-                >
-                  {count}
-                </span>
               </span>
             </button>
           );

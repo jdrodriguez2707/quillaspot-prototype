@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, Sparkles } from 'lucide-react';
+import { AlertCircle, RotateCcw, Sparkles } from 'lucide-react';
 import rawPlaces from './data/places.json';
 import {
   MoodFilterOption,
@@ -27,14 +27,12 @@ import { getPlaceSearchScore, tokenizeSearchQuery } from './utils/search';
 import { iosSpringSnappy } from './utils/physics';
 
 const CATEGORIES: PlaceCategory[] = [
-  'Todos',
   'Gastronomía',
   'Ecoturismo',
   'Cultura y Ocio',
 ];
 
 const MOODS: MoodFilterOption[] = [
-  'Todos los planes',
   'En Pareja',
   'Con Amigos',
   'En Familia',
@@ -305,9 +303,16 @@ export default function App() {
     setSearchTerm(`#${tag}`);
   }, []);
 
+  const handleResetCategoryAndMood = useCallback(() => {
+    setSelectedCategory('Todos');
+    setSelectedMood('Todos los planes');
+  }, []);
+
+  const hasCategoryOrMoodFilter =
+    selectedCategory !== 'Todos' || selectedMood !== 'Todos los planes';
+
   const hasActiveFilters =
-    selectedCategory !== 'Todos' ||
-    selectedMood !== 'Todos los planes' ||
+    hasCategoryOrMoodFilter ||
     searchTerm.trim() !== '';
 
   return (
@@ -378,9 +383,11 @@ export default function App() {
 
           {/* Fila inferior: Filtro por Mood (Ocasión y Ambiente) */}
           <div className="border-t border-black/[0.05] pt-2.5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            {/*
             <span className="text-[11px] font-semibold text-slate-400 px-1 shrink-0 whitespace-nowrap">
               ¿Cuál es el plan?
             </span>
+            */}
             <div className="w-full overflow-hidden">
               <MoodFilter
                 moods={MOODS}
@@ -390,16 +397,27 @@ export default function App() {
             </div>
           </div>
 
-          {/* Activador Fase 3: QuillaBot */}
-          <div className="border-t border-black/[0.05] pt-2.5 flex justify-center sm:justify-start">
+          {/* Activador Fase 3: QuillaBot + Opción para restablecer categoría y mood */}
+          <div className="border-t border-black/[0.05] pt-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <button
               type="button"
               onClick={() => setIsQuillaBotOpen(true)}
-              className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-4 py-2 text-xs sm:text-sm font-medium shadow-md inline-flex items-center gap-2 active:scale-95 transition-transform duration-100 ease-out cursor-pointer"
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-4 py-2 text-xs sm:text-sm font-medium shadow-md inline-flex items-center justify-center gap-2 active:scale-95 transition-transform duration-100 ease-out cursor-pointer self-center sm:self-auto"
             >
               <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
               <span>¿No sabes qué hacer? Pregúntale a QuillaBot</span>
             </button>
+
+            {hasCategoryOrMoodFilter && (
+              <button
+                type="button"
+                onClick={handleResetCategoryAndMood}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-black/[0.05] active:scale-95 transition-all duration-100 ease-out cursor-pointer self-center sm:self-auto"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <span>Restablecer filtros</span>
+              </button>
+            )}
           </div>
         </div>
 
