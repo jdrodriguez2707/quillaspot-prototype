@@ -22,6 +22,7 @@ import { PlanModal } from './components/plan/PlanModal';
 import { QuillaBotModal } from './components/bot/QuillaBotModal';
 import { MobileExperienceModal } from './components/layout/MobileExperienceModal';
 import { Footer } from './components/layout/Footer';
+import { BottomTabBar } from './components/layout/BottomTabBar';
 import { normalizeText } from './utils/text';
 import { getPlaceSearchScore, tokenizeSearchQuery } from './utils/search';
 import { iosSpringSnappy } from './utils/physics';
@@ -345,7 +346,7 @@ export default function App() {
       {/* Contenedor Responsivo: Mobile, Tablet y Desktop (máximo 1200px con padding óptico) */}
       <main
         className={`flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4 sm:gap-6 transition-[padding] duration-200 ${
-          plan.length > 0 ? 'pb-24' : 'pb-12'
+          plan.length > 0 ? 'pb-28' : 'pb-10'
         }`}
       >
         <HeroBanner totalPlaces={places.length} />
@@ -487,6 +488,9 @@ export default function App() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Menú inferior estilo iOS (Visual por ahora) */}
+      <BottomTabBar />
 
       {/* Modal QR de experiencia móvil en desktop montado a nivel raíz */}
       <MobileExperienceModal

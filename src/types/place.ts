@@ -59,5 +59,4 @@ export interface QuillaBotHistoryItem {
   content: string;
 }
 
-
-
+export type AppTabId = 'home' | 'plan' | 'quillabot';

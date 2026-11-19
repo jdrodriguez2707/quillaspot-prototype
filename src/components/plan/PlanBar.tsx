@@ -20,7 +20,7 @@ export const PlanBar: React.FC<PlanBarProps> = ({ plan, onOpenModal }) => {
   const placeLabel = plan.length === 1 ? 'lugar' : 'lugares';
 
   return (
-    <div className="fixed bottom-6 inset-x-0 z-30 flex justify-center px-4 pointer-events-none">
+    <div className="fixed bottom-[82px] inset-x-0 z-30 flex justify-center px-4 pointer-events-none">
       <motion.div
         initial={{ opacity: 0, y: 28, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
