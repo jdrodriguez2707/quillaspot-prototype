@@ -56,12 +56,15 @@ export const PlaceList: React.FC<PlaceListProps> = ({
       {/* Encabezado del catálogo estilo iOS Group Header */}
       <div className="flex items-center justify-between pt-1 px-1">
         <div className="flex items-center gap-2">
+          {/*
           <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400">
             Planes recomendados
           </h2>
+          
           <span className="text-[11px] sm:text-xs font-bold text-slate-500 bg-black/[0.05] px-2.5 py-0.5 rounded-full tabular-nums">
             {places.length}
           </span>
+          */}
         </div>
 
         {(showCategoryIcon || showMoodIcon) && (

@@ -25,6 +25,7 @@ interface PlaceDetailModalProps {
   planCount?: number;
   onTogglePlan?: (place: Place) => void;
   onOpenPlan?: () => void;
+  onSelectTag?: (tag: string) => void;
   onClose: () => void;
 }
 
@@ -52,6 +53,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
   planCount = 0,
   onTogglePlan,
   onOpenPlan,
+  onSelectTag,
   onClose,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -321,18 +323,30 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
             </p>
           </div>
 
-          {/* Etiquetas / Tags temáticos */}
+          {/* Etiquetas / Tags temáticos (tocables para filtrar el catálogo) */}
           {place.tags && place.tags.length > 0 && (
             <div className="pt-1">
               <div className="flex flex-wrap gap-1.5">
-                {place.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[11px] sm:text-xs font-medium text-amber-900 bg-amber-100/60 border border-amber-200/50 px-2.5 py-1 rounded-lg"
-                  >
-                    #{tag}
-                  </span>
-                ))}
+                {place.tags.map((tag) =>
+                  onSelectTag ? (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => onSelectTag(tag)}
+                      title={`Buscar planes con #${tag}`}
+                      className="text-[11px] sm:text-xs font-medium text-amber-900 bg-amber-100/60 hover:bg-amber-200/75 border border-amber-200/60 px-2.5 py-1 rounded-lg transition-all duration-100 ease-out active:scale-95 cursor-pointer"
+                    >
+                      #{tag}
+                    </button>
+                  ) : (
+                    <span
+                      key={tag}
+                      className="text-[11px] sm:text-xs font-medium text-amber-900 bg-amber-100/60 border border-amber-200/50 px-2.5 py-1 rounded-lg"
+                    >
+                      #{tag}
+                    </span>
+                  )
+                )}
               </div>
             </div>
           )}

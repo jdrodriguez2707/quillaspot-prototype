@@ -22,7 +22,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           type="text"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Buscar por nombre, municipio (ej: Puerto Colombia)..."
+          placeholder="Buscar lugar, barrio, #tag o plan (ej: pareja, barato)..."
           className="w-full pl-10 pr-9 py-2.5 bg-white/90 backdrop-blur-md border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-2xs font-medium"
         />
         {searchTerm && (

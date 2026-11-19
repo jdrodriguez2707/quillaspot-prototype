@@ -23,6 +23,7 @@ import { QuillaBotModal } from './components/bot/QuillaBotModal';
 import { MobileExperienceModal } from './components/layout/MobileExperienceModal';
 import { Footer } from './components/layout/Footer';
 import { normalizeText } from './utils/text';
+import { getPlaceSearchScore, tokenizeSearchQuery } from './utils/search';
 import { iosSpringSnappy } from './utils/physics';
 
 const CATEGORIES: PlaceCategory[] = [
@@ -118,31 +119,26 @@ export default function App() {
       result = result.filter((p) => p.moods.includes(selectedMood));
     }
 
-    // 3. Filtrar por término de búsqueda (insensible a acentos/tildes y mayúsculas)
-    const normalizedQuery = normalizeText(searchTerm);
-    if (normalizedQuery !== '') {
-      result = result.filter((p) => {
-        const matchName = normalizeText(p.name).includes(normalizedQuery);
-        const matchCategory = normalizeText(p.category).includes(normalizedQuery);
-        const matchMunicipality = normalizeText(p.municipality).includes(normalizedQuery);
-        const matchShortDesc = normalizeText(p.shortDescription).includes(normalizedQuery);
-        const matchFullDesc = normalizeText(p.fullDescription).includes(normalizedQuery);
-        const matchPriceLevel = normalizeText(p.priceLevel).includes(normalizedQuery);
-        const matchTags = p.tags?.some((t) => normalizeText(t).includes(normalizedQuery));
+    // 3. Búsqueda robusta multi-palabra (#tags, moods, barrio/dirección, sinónimos y relevancia)
+    const searchTokens = tokenizeSearchQuery(searchTerm);
+    if (searchTokens.length > 0) {
+      const scored = result
+        .map((place) => ({
+          place,
+          score: getPlaceSearchScore(place, searchTerm),
+        }))
+        .filter((entry) => entry.score > 0)
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          if (a.place.isFeatured && !b.place.isFeatured) return -1;
+          if (!a.place.isFeatured && b.place.isFeatured) return 1;
+          return b.place.rating - a.place.rating;
+        });
 
-        return (
-          matchName ||
-          matchCategory ||
-          matchMunicipality ||
-          matchShortDesc ||
-          matchFullDesc ||
-          matchPriceLevel ||
-          matchTags
-        );
-      });
+      return scored.map((entry) => entry.place);
     }
 
-    // 4. Regla estricta de negocio: isFeatured: true primero, luego mayor rating
+    // 4. Regla estricta de negocio sin búsqueda activa: isFeatured: true primero, luego mayor rating
     return result.sort((a, b) => {
       if (a.isFeatured && !b.isFeatured) return -1;
       if (!a.isFeatured && b.isFeatured) return 1;
@@ -297,6 +293,18 @@ export default function App() {
     window.history.pushState({ placeId: place.id }, '', url.toString());
   }, []);
 
+  const handleSelectTagFromDetail = useCallback((tag: string) => {
+    setSelectedPlace(null);
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('place')) {
+      url.searchParams.delete('place');
+      window.history.pushState({}, '', url.toString());
+    }
+    setSelectedCategory('Todos');
+    setSelectedMood('Todos los planes');
+    setSearchTerm(`#${tag}`);
+  }, []);
+
   const hasActiveFilters =
     selectedCategory !== 'Todos' ||
     selectedMood !== 'Todos los planes' ||
@@ -427,6 +435,7 @@ export default function App() {
             planCount={plan.length}
             onTogglePlan={togglePlaceInPlan}
             onOpenPlan={handleOpenPlanFromDetail}
+            onSelectTag={handleSelectTagFromDetail}
             onClose={handleCloseModal}
           />
         )}
