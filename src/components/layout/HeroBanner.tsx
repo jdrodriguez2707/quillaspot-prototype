@@ -31,10 +31,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ totalPlaces }) => {
           </h1>
 
           {/* Descripción general, impactante y costeña pensada para escalar a 50+ lugares */}
+          {/*
           <p className="text-xs sm:text-sm text-amber-50/95 mt-2.5 max-w-xl leading-relaxed font-normal">
             Tu guía definitiva para salir el finde: descubre dónde comer sabroso, ver caer la tarde frente al mar, armar planes al aire libre y gozarte lo mejor de Barranquilla y cada rincón del Atlántico.
           </p>
-
+          */}
+          
           {/* Píldoras informativas del territorio */}
           <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] sm:text-xs font-medium">
             <span className="inline-flex items-center gap-1.5 bg-black/25 backdrop-blur-md px-3 py-1.5 rounded-full text-white border border-white/10 shadow-2xs">

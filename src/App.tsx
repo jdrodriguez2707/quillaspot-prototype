@@ -15,6 +15,7 @@ import { CategoryFilter } from './components/filters/CategoryFilter';
 import { MoodFilter } from './components/filters/MoodFilter';
 import { SearchBar } from './components/filters/SearchBar';
 import { PlaceList } from './components/places/PlaceList';
+import { FeaturedCarousel } from './components/places/FeaturedCarousel';
 import { PlaceDetailModal } from './components/detail/PlaceDetailModal';
 import { PlanBar } from './components/plan/PlanBar';
 import { PlanModal } from './components/plan/PlanModal';
@@ -91,6 +92,14 @@ export default function App() {
       counts[p.category] = (counts[p.category] || 0) + 1;
     });
     return counts;
+  }, [places]);
+
+  // Top destacados para el carrusel horizontal (máximo 10, ordenados por calificación)
+  const featuredPlaces = useMemo(() => {
+    return places
+      .filter((place) => place.isFeatured)
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 10);
   }, [places]);
 
   // Filtrado resiliente con normalización de acentos y campos completos
@@ -327,6 +336,14 @@ export default function App() {
         }`}
       >
         <HeroBanner totalPlaces={places.length} />
+
+        {/* Carrusel horizontal fluido de lugares destacados */}
+        <FeaturedCarousel
+          places={featuredPlaces}
+          isPlaceInPlan={isPlaceInPlan}
+          onTogglePlan={togglePlaceInPlan}
+          onSelectPlace={handleSelectPlace}
+        />
 
         {/* Barra de controles: Búsqueda, Categorías y Filtro por Mood */}
         <div className="flex flex-col gap-2.5 bg-white/50 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl border border-black/[0.04] shadow-2xs">
