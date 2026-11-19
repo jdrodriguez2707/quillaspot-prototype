@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Home, Route, Sparkles } from 'lucide-react';
 import { AppTabId } from '../../types/place';
@@ -15,10 +15,15 @@ const TAB_ITEMS: TabItemConfig[] = [
   { id: 'quillabot', label: 'QuillaBot' },
 ];
 
-export const BottomTabBar: React.FC = () => {
-  // Estado puramente visual de la pestaña seleccionada (sin redirección ni lógica de rutas por ahora)
-  const [activeTab, setActiveTab] = useState<AppTabId>('home');
+interface BottomTabBarProps {
+  activeTab: AppTabId;
+  onChangeTab: (tabId: AppTabId) => void;
+}
 
+export const BottomTabBar: React.FC<BottomTabBarProps> = ({
+  activeTab,
+  onChangeTab,
+}) => {
   const renderIcon = (id: AppTabId, isActive: boolean) => {
     const strokeClass = isActive ? 'stroke-[2.25]' : 'stroke-[1.75]';
 
@@ -45,7 +50,7 @@ export const BottomTabBar: React.FC = () => {
             <button
               key={item.id}
               type="button"
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => onChangeTab(item.id)}
               aria-current={isActive ? 'page' : undefined}
               className={`relative min-h-[48px] flex flex-col items-center justify-center gap-0.5 rounded-2xl py-1 px-2 cursor-pointer select-none active:scale-95 transition-transform duration-100 ease-out focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500/40 ${
                 isActive
