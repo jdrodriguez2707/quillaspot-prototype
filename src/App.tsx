@@ -82,6 +82,7 @@ export default function App() {
 
   // Estado Fase 2: Armar Plan (hasta 4 lugares, persistido en localStorage)
   const [plan, setPlan] = useState<Place[]>(() => loadInitialPlan(rawPlaces as Place[]));
+  const [planBarLastAddedAt, setPlanBarLastAddedAt] = useState<number | null>(null);
   const [planToast, setPlanToast] = useState<PlanToastState | null>(null);
   // Estado Fase 3: QuillaBot (Asistente IA)
   const [isQuillaBotOpen, setIsQuillaBotOpen] = useState<boolean>(false);
@@ -230,6 +231,7 @@ export default function App() {
       }
 
       setPlan((prev) => [...prev, place]);
+      setPlanBarLastAddedAt(Date.now());
     },
     [plan]
   );
@@ -261,6 +263,7 @@ export default function App() {
 
   const clearPlan = useCallback(() => {
     setPlan([]);
+    setPlanBarLastAddedAt(null);
   }, []);
 
   const handleOpenPlanFromDetail = useCallback(() => {
@@ -439,10 +442,15 @@ export default function App() {
         />
       )}
 
-      {/* Píldora Flotante Inferior de Resumen del Plan (Auto-ocultable a los 5s) */}
+      {/* Píldora Flotante Inferior de Resumen del Plan (Auto-ocultable a los 5s tras agregar) */}
       <PlanBar
         plan={plan}
-        onNavigatePlan={() => setActiveTab('plan')}
+        lastAddedAt={planBarLastAddedAt}
+        onNavigatePlan={() => {
+          setIsQuillaBotOpen(false);
+          setSelectedPlace(null);
+          setActiveTab('plan');
+        }}
       />
 
       {/* Apple Fluid Bottom Sheet de Detalle con AnimatePresence para salida animada */}

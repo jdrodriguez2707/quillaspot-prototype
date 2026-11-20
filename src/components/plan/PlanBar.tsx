@@ -6,19 +6,24 @@ import { iosSpringSnappy } from '../../utils/physics';
 
 interface PlanBarProps {
   plan: Place[];
+  lastAddedAt?: number | null;
   onNavigatePlan: () => void;
 }
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80';
 
-export const PlanBar: React.FC<PlanBarProps> = ({ plan, onNavigatePlan }) => {
+export const PlanBar: React.FC<PlanBarProps> = ({
+  plan,
+  lastAddedAt,
+  onNavigatePlan,
+}) => {
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
-  // Cada vez que cambia el plan (se agrega o quita un lugar), mostramos la píldora por 5 segundos
+  // Solo se muestra cuando efectivamente se agrega un lugar nuevo al plan (no al recargar la página)
   useEffect(() => {
-    if (plan.length === 0) {
+    if (!lastAddedAt || plan.length === 0) {
       setIsVisible(false);
       return;
     }
@@ -26,12 +31,12 @@ export const PlanBar: React.FC<PlanBarProps> = ({ plan, onNavigatePlan }) => {
     setIsVisible(true);
     const timer = window.setTimeout(() => {
       setIsVisible(false);
-    }, 5000);
+    }, 10000);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, [plan]);
+  }, [lastAddedAt, plan.length]);
 
   if (plan.length === 0 || !isVisible) return null;
 
@@ -39,7 +44,7 @@ export const PlanBar: React.FC<PlanBarProps> = ({ plan, onNavigatePlan }) => {
 
   return (
     <AnimatePresence>
-      <div className="fixed bottom-[82px] inset-x-0 z-30 flex justify-center px-4 pointer-events-none">
+      <div className="fixed bottom-[82px] inset-x-0 z-[60] flex justify-center px-4 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 28, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
