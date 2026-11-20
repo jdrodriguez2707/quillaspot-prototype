@@ -411,7 +411,8 @@ export default function App() {
             </div>
 
             {/* Activador Fase 3: QuillaBot + Opción para restablecer categoría y mood */}
-            <div className="border-t border-black/[0.05] pt-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="pt-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              {/*
               <button
                 type="button"
                 onClick={() => setIsQuillaBotOpen(true)}
@@ -420,6 +421,7 @@ export default function App() {
                 <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>¿No sabes qué hacer? Pregúntale a QuillaBot</span>
               </button>
+              */}
 
               {hasCategoryOrMoodFilter && (
                 <button
