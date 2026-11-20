@@ -82,7 +82,7 @@ export default function App() {
 
   // Estado Fase 2: Armar Plan (hasta 4 lugares, persistido en localStorage)
   const [plan, setPlan] = useState<Place[]>(() => loadInitialPlan(rawPlaces as Place[]));
-  const [planBarLastAddedAt, setPlanBarLastAddedAt] = useState<number | null>(null);
+  const [planBarLastUpdatedAt, setPlanBarLastUpdatedAt] = useState<number | null>(null);
   const [planToast, setPlanToast] = useState<PlanToastState | null>(null);
   // Estado Fase 3: QuillaBot (Asistente IA)
   const [isQuillaBotOpen, setIsQuillaBotOpen] = useState<boolean>(false);
@@ -218,7 +218,13 @@ export default function App() {
     (place: Place) => {
       const exists = plan.some((item) => item.id === place.id);
       if (exists) {
-        setPlan((prev) => prev.filter((item) => item.id !== place.id));
+        const next = plan.filter((item) => item.id !== place.id);
+        setPlan(next);
+        if (next.length > 0) {
+          setPlanBarLastUpdatedAt(Date.now());
+        } else {
+          setPlanBarLastUpdatedAt(null);
+        }
         return;
       }
 
@@ -231,13 +237,21 @@ export default function App() {
       }
 
       setPlan((prev) => [...prev, place]);
-      setPlanBarLastAddedAt(Date.now());
+      setPlanBarLastUpdatedAt(Date.now());
     },
     [plan]
   );
 
   const removePlaceFromPlan = useCallback((placeId: string) => {
-    setPlan((prev) => prev.filter((item) => item.id !== placeId));
+    setPlan((prev) => {
+      const next = prev.filter((item) => item.id !== placeId);
+      if (next.length > 0) {
+        setPlanBarLastUpdatedAt(Date.now());
+      } else {
+        setPlanBarLastUpdatedAt(null);
+      }
+      return next;
+    });
   }, []);
 
   const movePlaceInPlan = useCallback(
@@ -263,7 +277,7 @@ export default function App() {
 
   const clearPlan = useCallback(() => {
     setPlan([]);
-    setPlanBarLastAddedAt(null);
+    setPlanBarLastUpdatedAt(null);
   }, []);
 
   const handleOpenPlanFromDetail = useCallback(() => {
@@ -442,10 +456,10 @@ export default function App() {
         />
       )}
 
-      {/* Píldora Flotante Inferior de Resumen del Plan (Auto-ocultable a los 5s tras agregar) */}
+      {/* Píldora Flotante Inferior de Resumen del Plan (Auto-ocultable a los 5s tras agregar o quitar) */}
       <PlanBar
         plan={plan}
-        lastAddedAt={planBarLastAddedAt}
+        lastUpdatedAt={planBarLastUpdatedAt}
         onNavigatePlan={() => {
           setIsQuillaBotOpen(false);
           setSelectedPlace(null);
