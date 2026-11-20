@@ -109,7 +109,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
         <button
           type="button"
           onClick={onClearPlan}
-          className="h-9 px-3.5 rounded-full bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 text-xs font-semibold inline-flex items-center gap-1.5 border border-black/[0.06] shadow-2xs transition-all duration-100 ease-out active:scale-95 cursor-pointer"
+          className="h-10 px-3.5 rounded-full bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 text-xs font-semibold inline-flex items-center gap-1.5 border border-black/[0.06] shadow-2xs transition-all duration-100 ease-out active:scale-95 cursor-pointer"
           title="Limpiar todo el plan"
         >
           <Trash2 className="w-3.5 h-3.5" />
